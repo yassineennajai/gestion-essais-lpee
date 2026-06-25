@@ -1,0 +1,86 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+
+  <div
+    class="card p-5 shadow-lg border-0"
+    style="width: 450px; border-radius: 20px;"
+  >
+
+    <!-- Logo -->
+
+    <div class="text-center mb-4">
+
+      <img
+        src="/images/logo_lpee.jpg"
+        width="120"
+        class="img-fluid mb-3"
+      >
+
+      <h2 class="text-primary fw-bold">
+        Plateforme de Gestion
+        <br>
+        Laboratoire
+      </h2>
+
+    </div>
+
+
+    <div class="mt-3">
+
+      <label class="form-label">
+        Email
+      </label>
+
+      <input
+        type="email"
+        class="form-control form-control-lg"
+
+        [(ngModel)]="email"
+        name="email"
+
+        placeholder="Entrer votre email"
+      >
+
+    </div>
+
+
+
+    <div class="mt-3">
+
+      <label class="form-label">
+        Mot de passe
+      </label>
+
+      <input
+        type="password"
+        class="form-control form-control-lg"
+
+        [(ngModel)]="mot_de_passe"
+        name="mot_de_passe"
+
+        placeholder="Entrer votre mot de passe"
+      >
+
+    </div>
+
+
+
+    <button
+      class="btn btn-primary btn-lg w-100 mt-4"
+
+      (click)="onLogin()"
+    >
+      Connexion
+    </button>
+
+
+    <div class="text-center mt-3">
+
+      <a routerLink="/forgot-password">
+  Mot de passe oublié ?
+</a>
+
+    </div>
+
+  </div>
+
+</div>

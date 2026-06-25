@@ -1,0 +1,188 @@
+<div class="container-fluid py-4">
+  <!-- Karta header pradarshan block -->
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+
+    <!-- En-tête de la page -->
+    <div class="card-header bg-white border-bottom border-light py-4 px-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <h4 class="m-0 fw-bold text-dark d-flex align-items-center gap-2">
+          <i class="bi bi-card-checklist text-success fs-3"></i> Liste des Essais Métier
+        </h4>
+        <p class="text-muted small m-0 mt-1">Consultez les informations détaillées de chaque essai dans un tableau simple</p>
+      </div>
+
+      <button *ngIf="!isAdmin" (click)="naviguerVersAjout()" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm d-flex align-items-center gap-2 text-white">
+        <i class="bi bi-plus-circle-fill"></i> Ajouter un essai
+      </button>
+    </div>
+
+    <!-- Contenu Principal (Mukhyati vishay) -->
+    <div class="card-body p-0">
+
+      <!-- État de Chargement (Pratikhya kara) -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="text-muted mt-2 small mb-0">Chargement des données en cours...</p>
+      </div>
+
+      <!-- Liste des essais vide (Kahihi sapadle nahi) -->
+      <div *ngIf="!isLoading && paginatedEssaiList.length === 0" class="text-center py-5 px-4">
+        <div class="p-4 rounded-circle bg-light d-inline-flex mb-3 text-secondary">
+          <i class="bi bi-folder-x fs-1"></i>
+        </div>
+        <h5 class="fw-bold text-dark mb-1">Aucun essai trouvé</h5>
+        <p class="text-muted small max-w-md mx-auto mb-0">
+          {{ searchTerm ? 'Aucun résultat pour "' + searchTerm + '"' : 'Aucun essai disponible.' }}
+        </p>
+      </div>
+
+      <!-- Tableau Simple (Sadha patrak) -->
+      <div class="table-responsive" *ngIf="!isLoading && paginatedEssaiList.length > 0">
+        <table class="table table-hover align-middle mb-0 text-nowrap">
+          <thead class="bg-light text-secondary text-uppercase small" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+            <tr>
+              <th class="py-3 px-3" style="width: 70px;">ID</th>
+              <th class="py-3 px-3">Intitulé</th>
+              <th class="py-3 px-3">Domaine</th>
+              <th class="py-3 px-3">Famille</th>
+              <th class="py-3 px-3">Sous-Famille</th>
+              <th class="py-3 px-3">Norme</th>
+              <th class="py-3 px-3">Parties</th>
+              <th class="py-3 px-3">Type</th>
+              <!-- 🟢 تظهر خانة العنوان فقط للـ Admin -->
+              <th *ngIf="isAdmin" class="py-3 px-3">Unité LPEE</th>
+              <th class="py-3 px-3 text-center" style="width: 150px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-light fs-7">
+            <tr *ngFor="let essai of paginatedEssaiList" class="transition-all hover:bg-slate-50">
+
+              <!-- 1. ID -->
+              <td class="py-3 px-3 fw-bold text-muted font-monospace">#{{ essai.id_essai }}</td>
+
+              <!-- 2. Intitulé -->
+              <td class="py-3 px-3 fw-semibold text-dark">{{ essai.intitule }}</td>
+
+              <!-- 3. Domaine -->
+              <td class="py-3 px-3 text-secondary">{{ essai.nom_domaine || '--' }}</td>
+
+              <!-- 4. Famille -->
+              <td class="py-3 px-3 text-secondary-emphasis fw-medium">{{ essai.nom_famille || '--' }}</td>
+
+              <!-- 5. Sous-Famille -->
+              <td class="py-3 px-3 text-muted">
+                <span *ngIf="essai.nom_sous_famille" class="badge bg-light text-secondary border rounded">
+                  {{ essai.nom_sous_famille }}
+                </span>
+                <span *ngIf="!essai.nom_sous_famille">--</span>
+              </td>
+
+              <!-- 6. Norme -->
+              <td class="py-3 px-3">
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded px-2 py-1 font-monospace fs-8">
+                  {{ essai.nom_norme || '--' }}
+                </span>
+              </td>
+
+              <!-- 7. Parties -->
+              <td class="py-3 px-3">
+                <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
+                  <ng-container *ngIf="essai.id_partie && essai.id_partie.length > 0">
+                    <span *ngFor="let p of essai.id_partie" class="badge bg-secondary-subtle text-secondary border rounded fs-8">
+                      P{{ p }}
+                    </span>
+                  </ng-container>
+                  <span *ngIf="!essai.id_partie || essai.id_partie.length === 0" class="text-muted">--</span>
+                </div>
+              </td>
+
+              <!-- 8. Type -->
+              <td class="py-3 px-3">
+                <span class="badge bg-light text-dark border rounded px-2 py-1">
+                  {{ essai.type }}
+                </span>
+              </td>
+
+              <!-- 🟢 9. تظهر تفاصيل الوحدة والمدينة فقط للـ Admin -->
+              <td *ngIf="isAdmin" class="py-3 px-3">
+                <div class="d-flex flex-column text-start">
+                  <span class="fw-bold text-primary small">{{ essai.nom_unite }}</span>
+                  <span class="text-muted small fs-8"><i class="bi bi-geo-alt"></i> {{ essai.nom_ville || '--' }}</span>
+                </div>
+              </td>
+
+              <!-- 10. Actions -->
+              <td class="py-3 px-3 text-center">
+                <div class="d-flex justify-content-center gap-1">
+                  <!-- Consultation / Edition -->
+                  <button (click)="editEssai(essai)"
+                          [class]="isAdmin ? 'btn btn-outline-primary' : 'btn btn-outline-warning'"
+                          class="btn-sm rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-sm fs-8">
+                    <i class="bi" [ngClass]="isAdmin ? 'bi-eye-fill' : 'bi-pencil-fill'"></i>
+                    {{ isAdmin ? 'Voir' : 'Edit' }}
+                  </button>
+
+                  <!-- Suppression -->
+                  <button *ngIf="!isAdmin"
+                          (click)="deleteEssai(essai)"
+                          class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-sm fs-8">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 📊 Barre de Pagination -->
+      <div class="card-footer bg-white border-top border-light py-3 px-4 d-flex align-items-center justify-content-between flex-wrap gap-3"
+           *ngIf="!isLoading && filteredEssaiList.length > 0">
+
+        <!-- Positions chya nond -->
+        <div class="text-muted small">
+          Affichage de <strong class="text-dark">{{ startRecordIndex }}</strong> à <strong class="text-dark">{{ endRecordIndex }}</strong> sur <strong class="text-dark">{{ filteredEssaiList.length }}</strong> essais
+        </div>
+
+        <!-- Panepana chalva -->
+        <nav aria-label="Pagination" *ngIf="totalPages > 1">
+          <ul class="pagination pagination-sm m-0 gap-1 border-0">
+
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link rounded-circle border-light d-flex align-items-center justify-content-center p-2"
+                      (click)="prevPage()"
+                      [disabled]="currentPage === 1"
+                      style="width: 32px; height: 32px;">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+            </li>
+
+            <li class="page-item" *ngFor="let page of pagesArray" [class.active]="page === currentPage">
+              <button class="page-link rounded-circle border-light d-flex align-items-center justify-content-center fw-semibold"
+                      (click)="goToPage(page)"
+                      [ngStyle]="page === currentPage ? {'background-color': '#198754', 'border-color': '#198754', 'color': 'white'} : {'color': '#495057'}"
+                      style="width: 32px; height: 32px; font-size: 0.85rem;">
+                {{ page }}
+              </button>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+              <button class="page-link rounded-circle border-light d-flex align-items-center justify-content-center p-2"
+                      (click)="nextPage()"
+                      [disabled]="currentPage === totalPages"
+                      style="width: 32px; height: 32px;">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </li>
+
+          </ul>
+        </nav>
+
+      </div>
+
+    </div>
+  </div>
+</div>

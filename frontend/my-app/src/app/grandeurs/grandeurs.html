@@ -1,0 +1,100 @@
+<div class="container-fluid py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark m-0">Grandeurs de Mesure</h3>
+      <p class="text-muted small m-0">Gérez les dimensions et unités de mesure des essais</p>
+    </div>
+    <button (click)="openAddModal()" class="btn btn-success rounded-pill px-4 fw-medium shadow-sm d-flex align-items-center gap-2">
+      <i class="bi bi-plus-circle-fill"></i> Ajouter une grandeur
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light border-bottom border-light">
+          <tr>
+            <th class="ps-4 text-secondary small fw-bold text-uppercase py-3" style="width: 10%;">ID</th>
+            <th class="text-secondary small fw-bold text-uppercase py-3" style="width: 25%;">Code / Symbole</th>
+            <th class="text-secondary small fw-bold text-uppercase py-3">Libellé / Désignation</th>
+            <th class="pe-4 text-secondary small fw-bold text-uppercase py-3 text-end" style="width: 20%;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let g of grandeurs">
+            <td class="ps-4 fw-medium text-secondary">#{{ g.id_grandeur }}</td>
+            <td>
+              <span class="badge bg-light text-success border border-success-subtle px-3 py-2 rounded-3 fs-6">
+                {{ g.code }}
+              </span>
+            </td>
+            <td class="fw-semibold text-dark">{{ g.libelle }}</td>
+            <td class="pe-4 text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <button (click)="openEditModal(g)" class="btn btn-outline-primary btn-sm border-0 p-2 rounded-circle" title="Modifier">
+                  <i class="bi bi-pencil-square fs-5"></i>
+                </button>
+                <button (click)="deleteGrandeur(g.id_grandeur)" class="btn btn-outline-danger btn-sm border-0 p-2 rounded-circle" title="Supprimer">
+                  <i class="bi bi-trash3 fs-5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="grandeurs.length === 0">
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+              Aucune grandeur de mesure trouvée.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade show d-block" *ngIf="showModal" style="background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <div class="modal-header border-bottom border-light p-4 bg-white">
+        <h5 class="modal-title fw-bold text-dark m-0">
+          <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square text-primary' : 'bi-plus-circle text-success'"></i>
+          {{ isEditMode ? 'Modifier' : 'Ajouter' }} une Grandeur
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="grandeurForm" (ngSubmit)="save()" novalidate>
+        <div class="modal-body p-4 bg-white">
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold small text-secondary">Code / Symbole <span class="text-danger">*</span></label>
+            <input type="text" formControlName="code" class="form-control form-control-lg fs-6"
+                   [class.is-invalid]="isSubmitted && f['code'].invalid" placeholder="Ex: TEMP, LONG, MM">
+            <div class="invalid-feedback">Le code est obligatoire (Max 10 caractères).</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small text-secondary">Désignation / Libellé <span class="text-danger">*</span></label>
+            <input type="text" formControlName="libelle" class="form-control form-control-lg fs-6"
+                   [class.is-invalid]="isSubmitted && f['libelle'].invalid" placeholder="Ex: Température, Longueur">
+            <div class="invalid-feedback">La désignation est obligatoire.</div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer p-3 border-top border-light bg-light d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-light rounded-pill px-4 border text-secondary" (click)="closeModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn rounded-pill px-4 fw-semibold text-white"
+                  [ngClass]="isEditMode ? 'btn-primary' : 'btn-success'">
+            {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

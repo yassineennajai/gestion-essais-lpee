@@ -1,0 +1,194 @@
+<div class="container-fluid py-4">
+
+  <!-- En-tête de la page -->
+  <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
+    <div>
+      <h3 class="fw-bold text-dark m-0">Gestion des Normes</h3>
+      <p class="text-muted small m-0">Consultez et gérez les normes et leurs différentes parties de manière dynamique</p>
+    </div>
+
+    <button [routerLink]="['/dashboard-admin/ajouter-norme']" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 text-white" type="button">
+      <i class="bi bi-plus-circle-fill"></i> Ajouter une norme
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+
+    <!-- مؤشر تحميل البيانات -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+      <p class="text-muted mt-2 small mb-0">Chargement des normes en cours...</p>
+    </div>
+
+    <!-- جدول عرض المواصفات القياسية -->
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light border-bottom border-light">
+          <tr>
+            <th style="width: 15%" class="ps-4 text-secondary small fw-bold text-uppercase py-3">ID Norme</th>
+            <th style="width: 45%" class="text-secondary small fw-bold text-uppercase py-3">Libellé de la Norme</th>
+            <th style="width: 25%" class="text-secondary small fw-bold text-uppercase py-3">Parties</th>
+            <th style="width: 15%" class="pe-4 text-secondary small fw-bold text-uppercase py-3 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- نمر على مصفوفة normes المقطعة بالـ Pagination من ملف الـ TS -->
+          <ng-container *ngFor="let n of normes">
+
+            <!-- وضع تعديل المواصفة -->
+            <tr *ngIf="idNormeEnCoursDEdition === n.id_norme" class="table-warning">
+              <td class="fw-medium text-secondary ps-4">#{{ n.id_norme }}</td>
+              <td>
+                <input type="text" [(ngModel)]="normeModifiee.libelle" class="form-control form-control-sm rounded-2 fw-semibold">
+              </td>
+              <td>
+                <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1.5">{{ normeModifiee.parties?.length || 0 }} en cours</span>
+                <button class="btn btn-sm btn-link text-dark ms-2 p-0 fw-bold text-decoration-none" (click)="n.isOpen = !n.isOpen" type="button">
+                  <i class="bi" [ngClass]="n.isOpen ? 'bi-eye-slash-fill' : 'bi-gear-fill'"></i>
+                  {{ n.isOpen ? 'Masquer' : 'Gérer' }}
+                </button>
+              </td>
+              <td class="text-center pe-4">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="enregistrerModification(n.id_norme)" class="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold text-white" type="button">
+                    <i class="bi bi-check-lg"></i> Valider
+                  </button>
+                  <button (click)="annulerModification()" class="btn btn-sm btn-light border rounded-pill px-3 py-1 text-secondary" type="button">
+                    Annuler
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- وضع العرض العادي للمواصفة -->
+            <tr *ngIf="idNormeEnCoursDEdition !== n.id_norme">
+              <td class="fw-medium text-secondary ps-4">#{{ n.id_norme }}</td>
+              <td class="fw-semibold text-dark">{{ n.libelle }}</td>
+              <td>
+                <span class="badge rounded-pill fw-semibold px-3 py-1.5"
+                      [ngClass]="(n.parties?.length || 0) > 0 ? 'bg-info-subtle text-info border border-info-subtle' : 'bg-light text-muted border'">
+                  {{ n.parties?.length || 0 }} partie(s)
+                </span>
+                <button class="btn btn-sm btn-link text-secondary ms-2 p-0" (click)="n.isOpen = !n.isOpen" *ngIf="(n.parties?.length || 0) > 0" type="button">
+                  <i class="bi" [ngClass]="n.isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+              </td>
+              <td class="text-center pe-4">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="activerModification(n)" class="btn btn-sm btn-outline-primary border-0 rounded-circle p-2" title="Modifier" type="button">
+                    <i class="bi bi-pencil-square fs-5"></i>
+                  </button>
+                  <button (click)="supprimerNorme(n.id_norme)" class="btn btn-sm btn-outline-danger border-0 rounded-circle p-2" title="Supprimer" type="button">
+                    <i class="bi bi-trash3 fs-5"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- تفاصيل وإدارة الأجزاء الفرعية المنسدلة -->
+            <tr *ngIf="n.isOpen">
+              <td colspan="4" class="bg-light-subtle p-3">
+                <div class="ps-4 border-start border-2" [ngClass]="idNormeEnCoursDEdition === n.id_norme ? 'border-warning' : 'border-info'">
+
+                  <!-- الأجزاء في وضع التعديل -->
+                  <div *ngIf="idNormeEnCoursDEdition === n.id_norme">
+                    <h6 class="text-warning small fw-bold text-uppercase mb-2">Modifier les parties :</h6>
+                    <div class="d-flex gap-2 mb-3" style="max-width: 600px;">
+                      <input type="text" [(ngModel)]="nouvellePartieNo" class="form-control form-control-sm" placeholder="N° (Ex: Partie 1)" style="width: 25%;">
+                      <input type="text" [(ngModel)]="nouvellePartieTitre" class="form-control form-control-sm" placeholder="Titre de la partie" style="width: 60%;">
+                      <button class="btn btn-sm btn-warning fw-bold text-dark text-nowrap" type="button" (click)="addPartieForm()">+ Ajouter</button>
+                    </div>
+
+                    <ul class="list-group list-group-flush rounded-3 border" style="max-width: 600px;" *ngIf="(normeModifiee.parties?.length || 0) > 0">
+                      <li *ngFor="let p of normeModifiee.parties; let i = index" class="list-group-item d-flex justify-content-between align-items-center bg-white py-2 px-3">
+                        <span class="text-dark fw-medium"><strong class="text-secondary">{{ p.no_partie }}:</strong> {{ p.titre }}</span>
+                        <button type="button" (click)="removePartieForm(i)" class="btn btn-sm btn-link text-danger p-0 border-0">
+                          <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                      </li>
+                    </ul>
+                    <p *ngIf="(normeModifiee.parties?.length || 0) === 0" class="text-muted small mb-0">Aucune partie pour le moment. Ajoutez-en une !</p>
+                  </div>
+
+                  <!-- الأجزاء في وضع العرض العادي -->
+                  <div *ngIf="idNormeEnCoursDEdition !== n.id_norme && n.parties?.length > 0">
+                    <h6 class="text-info small fw-bold text-uppercase mb-2">Liste des parties :</h6>
+                    <ul class="list-group list-group-flush rounded-3 border" style="max-width: 600px;">
+                      <li *ngFor="let p of n.parties" class="list-group-item d-flex justify-content-between align-items-center bg-white py-2 px-3">
+                        <span class="text-dark fw-medium"><strong class="text-secondary">{{ p.no_partie }} :</strong> {{ p.titre }}</span>
+                        <span class="text-muted small">ID: #{{ p.id_partie }}</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+
+          </ng-container>
+
+          <!-- سطر يعرض في حالة فراغ النتائج بعد الفلترة والبحث الفوري -->
+          <tr *ngIf="filteredNormesList.length === 0">
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-folder-x display-5 d-block mb-2 opacity-50"></i>
+              Aucune norme trouvée pour cette recherche.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📊 شريط أدوات الـ Pagination والمؤشرات التفاعلية في الأسفل -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 p-4 border-top border-light bg-light-subtle"
+         *ngIf="!isLoading && filteredNormesList.length > 0">
+
+      <!-- إحصائية مؤشر السجلات المعروضة حالياً -->
+      <span class="text-muted small">
+        Affichage de <strong class="text-dark">{{ startRecordIndex }}</strong> à <strong class="text-dark">{{ endRecordIndex }}</strong> sur <strong class="text-dark">{{ filteredNormesList.length }}</strong> normes
+      </span>
+
+      <!-- أزرار التنقل والصفحات تظهر عند تجاوز صفحة واحدة -->
+      <nav *ngIf="totalPages > 1" aria-label="Pagination">
+        <ul class="pagination pagination-sm m-0 gap-1 border-0">
+
+          <!-- زر الانتقال للصفحة السابقة -->
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="prevPage()"
+                    [disabled]="currentPage === 1"
+                    style="width: 32px; height: 32px;"
+                    title="Précédent"
+                    type="button">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+
+          <!-- أرقام الصفحات النشطة -->
+          <li class="page-item" *ngFor="let page of pagesArray" [class.active]="currentPage === page">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center"
+                    (click)="goToPage(page)"
+                    [ngStyle]="currentPage === page ? {'background-color': '#0d6efd', 'color': '#ffffff', 'border-color': '#0d6efd'} : {'background-color': '#ffffff', 'color': '#495057', 'border-color': '#dee2e6'}"
+                    style="width: 32px; height: 32px; font-weight: 600;"
+                    type="button">
+              {{ page }}
+            </button>
+          </li>
+
+          <!-- زر الانتقال للصفحة التالية -->
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="nextPage()"
+                    [disabled]="currentPage === totalPages"
+                    style="width: 32px; height: 32px;"
+                    title="Suivant"
+                    type="button">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</div>

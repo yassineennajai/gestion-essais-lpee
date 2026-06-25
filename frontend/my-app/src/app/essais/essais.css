@@ -1,0 +1,151 @@
+/* --- 1. الخلفية العامة والخطوط الموحدة --- */
+.dashboard-container {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- 2. الكرت الرئيسي المحيط بالجدول --- */
+.custom-card {
+  background: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* --- 3. تصميم الجدول الحديث (Table Modern) --- */
+.table-modern, .custom-table-full {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* الـ Header (رأس الجدول) بنفس الرمادي الفاتح والنص العريض */
+.table-modern thead th, .custom-table-full thead th {
+  background-color: #f8fafc !important;
+  color: #64748b !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 16px 24px !important;
+}
+
+/* الأسطر وتأثير الـ Hover الخفيف */
+.table-modern tbody tr, .custom-table-full tbody tr {
+  border-bottom: 1px solid #f1f5f9 !important;
+  transition: all 0.2s ease;
+}
+
+.table-modern tbody tr:hover, .custom-table-full tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+.table-modern tbody td, .custom-table-full tbody td {
+  padding: 16px 24px !important;
+  color: #334155 !important;
+  font-size: 0.875rem;
+}
+
+/* --- 4. الـ Badges الأنيقة (Elegant Badges) --- */
+.fs-8 {
+  font-size: 0.75rem !important;
+}
+
+/* الـ Badge الأزرق (ديال الـ Unité و الـ Administrateur) */
+.badge-admin, .badge.bg-primary-subtle {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  border: none !important;
+}
+
+/* الـ Badge الأخضر (ديال الـ Utilisateur و الـ Type) */
+.badge-user, .badge.bg-light {
+  background-color: #f0fdf4 !important;
+  color: #166534 !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  border: none !important;
+}
+
+/* الـ Badge السماوي (ديال الـ Domaine) */
+.badge.bg-info-subtle {
+  background-color: #ecfeff !important;
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  border: none !important;
+}
+
+/* الـ Badge الأصفر/البرتقالي (ديال الـ Norme) */
+.badge.bg-warning-subtle {
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  border: none !important;
+}
+
+.btn-action-edit, .text-warning {
+  background-color: #f0fdf4 !important;
+  color: #16a34a !important;
+  border: none !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-action-edit:hover, .text-warning:hover {
+  background-color: #16a34a !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+}
+
+.btn-action-delete, .text-danger {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: none !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-action-delete:hover, .text-danger:hover {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+}
+
+
+.text-wrap-title {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-truncate-cell, .text-truncate-norme {
+  display: inline-block;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}

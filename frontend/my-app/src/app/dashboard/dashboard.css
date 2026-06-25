@@ -1,0 +1,50 @@
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* خلفية احترافية للـ Banner */
+.bg-gradient-dark {
+  background: linear-gradient(135deg, #1a1c23 0%, #252836 100%);
+}
+
+/* ستايل الكروت البسيط والنقي */
+.card-minimal {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid rgba(0,0,0,0.03) !important;
+}
+.card-minimal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* الدوائر الملونة للأيقونات */
+.icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* تمييز كارت "اليوم" بلون خفيف */
+.alert-today {
+  background-color: #fffbfa !important;
+  border: 1px dashed rgba(220, 53, 69, 0.2) !important;
+}
+
+/* تقسيم متناسق لـ 5 كروت على شاشات الـ XL */
+@media (min-width: 1200px) {
+  .col-xl-2\.4 {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+}
+
+.fw-extrabold {
+  font-weight: 800;
+}

@@ -1,0 +1,210 @@
+<div class="container-fluid py-4 bg-light min-vh-100">
+
+  <div *ngIf="loading" class="text-center my-5 py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Chargement des données du tableau de bord...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mx-3" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && !errorMessage">
+
+    <div class="row mb-4 px-3">
+      <div class="col-12 bg-white p-4 rounded shadow-sm d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fw-bold text-dark mb-1">Bonjour, {{ data.user_nom }} !</h2>
+          <p class="text-muted mb-0">
+            <i class="bi bi-geo-alt-fill text-danger"></i> {{ data.nom_unite }} — {{ data.ville_unite }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="data.role === 'ADMIN'">
+
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-people-fill text-primary fs-3 mb-2"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_utilisateurs }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Utilisateurs</small>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-building text-success fs-3 mb-2"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_unites }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Unités / Labs</small>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-flask-fill text-info fs-3 mb-2"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_essais }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Total Essais</small>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-journal-bookmark-fill text-warning fs-3 mb-2"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_normes }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Normes DB</small>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-tags-fill text-purple fs-3 mb-2" style="color: #8b5cf6;"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_familles }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Familles</small>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="card p-3 border-0 shadow-sm text-center bg-white h-100">
+            <i class="bi bi-rulers text-secondary fs-3 mb-2"></i>
+            <h4 class="fw-bold text-dark mb-0">{{ data.cards.total_grandeurs }}</h4>
+            <small class="text-muted text-uppercase fw-semibold" style="font-size: 11px;">Grandeurs</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-12">
+          <div class="card p-4 border-0 shadow-sm bg-white">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-bar-chart-line-fill text-primary me-2"></i> Activité des Essais par Unité</h5>
+            <canvas #adminChart1></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-6">
+          <div class="card p-4 border-0 shadow-sm bg-white">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-clock-history text-info me-2"></i> Flux des Derniers Essais</h5>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr><th>ID</th><th>Intitulé de l'Essai</th><th>Unité Responsable</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let e of data.recents_essais">
+                    <td><code>#{{ e.id_essai }}</code></td>
+                    <td class="fw-semibold text-dark">{{ e.intitule_essai }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ e.nom_unite }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <div class="card p-4 border-0 shadow-sm bg-white">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-person-plus-fill text-warning me-2"></i> Derniers Comptes Créés</h5>
+            <ul class="list-group list-group-flush">
+              <li *ngFor="let u of data.recents_utilisateurs" class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-person-circle fs-4 text-secondary me-3"></i>
+                  <span class="text-dark fw-medium">{{ u.email }}</span>
+                </div>
+                <span class="badge" [ngClass]="u.role === 'ADMIN' ? 'bg-danger':'bg-secondary'">{{ u.role }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="data.role === 'USER'">
+
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card p-3 border-0 shadow-sm bg-white d-flex flex-row align-items-center">
+            <div class="p-3 bg-primary-subtle rounded text-primary me-3">
+              <i class="bi bi-clipboard2-pulse-fill fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold text-dark mb-0">{{ data.cards.unite_essais }}</h3>
+              <small class="text-muted">Nos Essais Réalisés</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card p-3 border-0 shadow-sm bg-white d-flex flex-row align-items-center">
+            <div class="p-3 bg-success-subtle rounded text-success me-3">
+              <i class="bi bi-shield-check fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold text-dark mb-0">{{ data.cards.unite_normes }}</h3>
+              <small class="text-muted">Normes Accessibles</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card p-3 border-0 shadow-sm bg-white d-flex flex-row align-items-center">
+            <div class="p-3 bg-warning-subtle rounded text-warning me-3">
+              <i class="bi bi-folder-fill fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold text-dark mb-0">{{ data.cards.unite_familles }}</h3>
+              <small class="text-muted">Nos Familles Produits</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="card p-3 border-0 shadow-sm bg-white d-flex flex-row align-items-center">
+            <div class="p-3 bg-info-subtle rounded text-info me-3">
+              <i class="bi bi-cpu-fill fs-3"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold text-dark mb-0">{{ data.cards.unite_grandeurs }}</h3>
+              <small class="text-muted">Grandeurs de Mesure</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-12">
+          <div class="card p-4 border-0 shadow-sm bg-white">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-graph-up text-success me-2"></i> Rythme de Production Mensuel (Notre Labo)</h5>
+            <canvas #userChart1></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-12">
+          <div class="card p-4 border-0 shadow-sm bg-white">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-list-task text-primary me-2"></i> Derniers Essais Enregistrés par Notre Équipe</h5>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr><th>Code</th><th>Intitulé</th><th>Type</th><th>Date d'ajout</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let e of data.recents_essais">
+                    <td><code>#ESS-{{ e.id_essai }}</code></td>
+                    <td class="fw-bold text-dark">{{ e.intitule_essai }}</td>
+                    <td>
+                      <span class="badge" [ngClass]="e.type === 'Public' ? 'bg-success-subtle text-success':'bg-warning-subtle text-warning'">
+                        {{ e.type }}
+                      </span>
+                    </td>
+                    <td class="text-muted small">{{ e.date_creation }}</td>
+                  </tr>
+                  <tr *ngIf="data.recents_essais?.length === 0">
+                    <td colspan="4" class="text-center text-muted py-3">Aucun essai enregistré pour le moment.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div> </div>
+</div>

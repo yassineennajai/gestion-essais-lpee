@@ -1,0 +1,166 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+
+        <!-- En-tête de la carte avec titre dynamique selon le rôle et l'état -->
+        <div class="card-header bg-white border-bottom border-light py-4 px-4 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-3 rounded-3 bg-light" [ngClass]="isAdmin ? 'text-primary bg-light-blue' : 'text-success bg-light-green'">
+              <i class="bi fs-4" [ngClass]="isAdmin ? 'bi-eye-fill' : 'bi-file-earmark-plus-fill'"></i>
+            </div>
+            <div>
+              <h4 class="m-0 fw-bold text-dark">
+                {{ isAdmin ? 'Consulter un Essai' : (isEditMode ? 'Modifier un Essai' : 'Ajouter un Essai') }}
+              </h4>
+              <p class="text-muted small m-0">
+                {{ isAdmin ? 'Visualisation des détails techniques (Mode Lecture Admin)' : 'Remplissez les informations techniques de l\'essai' }}
+              </p>
+            </div>
+          </div>
+          <button type="button" (click)="cancel()" class="btn btn-light btn-sm rounded-pill px-3 border">
+            <i class="bi bi-arrow-left me-1"></i> Retour
+          </button>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form [formGroup]="essaiForm" (ngSubmit)="save()" novalidate>
+
+            <!-- Section 1 : Informations Générales de l'essai -->
+            <div class="mb-5">
+              <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom text-uppercase tracking-wider fs-6" style="color: #4b5563;">
+                <i class="bi bi-info-circle-fill me-2" [ngClass]="isAdmin ? 'text-primary' : 'text-success'"></i> Informations Générales
+              </h5>
+              <div class="row g-4">
+                <div class="col-12 col-md-8">
+                  <label class="form-label fw-semibold small text-secondary">Intitulé de l'essai <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <input type="text" formControlName="intitule" class="form-control form-control-lg fs-6" [class.is-invalid]="isSubmitted && f['intitule'].invalid" [readonly]="isAdmin" [class.bg-light]="isAdmin">
+                  <div class="invalid-feedback">L'intitulé de l'essai est obligatoire.</div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="form-label fw-semibold small text-secondary">Type d'essai <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <input type="text" formControlName="type" class="form-control form-control-lg fs-6" [class.is-invalid]="isSubmitted && f['type'].invalid" [readonly]="isAdmin" [class.bg-light]="isAdmin" placeholder="Ex: Public, Privé...">
+                  <div class="invalid-feedback">Le type d'essai est obligatoire.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2 : Classification Métier (Domaines, Familles et Sous-familles) -->
+            <div class="mb-5">
+              <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom text-uppercase tracking-wider fs-6" style="color: #4b5563;">
+                <i class="bi bi-layers-fill me-2" [ngClass]="isAdmin ? 'text-primary' : 'text-success'"></i> Classification Métier
+              </h5>
+              <div class="row g-4">
+                <!-- Domaine d'activité (Seulement pour ADMIN ou LNM) -->
+                <div class="col-12 col-md-4" *ngIf="isAdmin || isLNM">
+                  <label class="form-label fw-semibold small text-secondary">Domaine d'activité <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <select formControlName="idDomaine" class="form-select" [class.is-invalid]="isSubmitted && f['idDomaine']?.invalid" [style.pointer-events]="isAdmin ? 'none' : 'auto'" [class.bg-light]="isAdmin">
+                    <option [ngValue]="null">-- Choisir un domaine --</option>
+                    <option *ngFor="let dom of domaines" [ngValue]="dom.id_domaine">{{ dom.libelle || dom.nom_domaine }}</option>
+                  </select>
+                  <div class="invalid-feedback">Le domaine d'activité est obligatoire.</div>
+                </div>
+
+                <!-- Famille de l'essai -->
+                <div class="col-12" [ngClass]="(isAdmin || isLNM) ? 'col-md-4' : 'col-md-6'">
+                  <label class="form-label fw-semibold small text-secondary">Famille <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <select formControlName="idFamille" class="form-select" [class.is-invalid]="isSubmitted && f['idFamille'].invalid" [style.pointer-events]="isAdmin ? 'none' : 'auto'" [class.bg-light]="isAdmin">
+                    <option [ngValue]="null">-- Choisir une famille --</option>
+                    <option *ngFor="let fam of filteredFamilles" [ngValue]="fam.id_famille">{{ fam.nom_famille }}</option>
+                  </select>
+                  <div class="invalid-feedback">La famille est obligatoire.</div>
+                </div>
+
+                <!-- Sous-famille de l'essai (S'affiche dynamiquement s'il y a des sous-familles associées) -->
+                <div class="col-12" [ngClass]="(isAdmin || isLNM) ? 'col-md-4' : 'col-md-6'" *ngIf="filteredSousFamilles && filteredSousFamilles.length > 0">
+                  <label class="form-label fw-semibold small text-secondary">Sous-famille <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <select formControlName="idSousFamille" class="form-select" [class.is-invalid]="isSubmitted && f['idSousFamille'].invalid" [style.pointer-events]="isAdmin ? 'none' : 'auto'" [class.bg-light]="isAdmin">
+                    <option [ngValue]="null">-- Choisir une sous-famille --</option>
+                    <option *ngFor="let sf of filteredSousFamilles" [ngValue]="sf.id_sous_famille">{{ sf.libelle }}</option>
+                  </select>
+                  <div class="invalid-feedback">La sous-famille est obligatoire.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3 : Norme de Référence et Parties associées -->
+            <div class="mb-5">
+              <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom text-uppercase tracking-wider fs-6" style="color: #4b5563;">
+                <i class="bi bi-bookmark-star-fill me-2" [ngClass]="isAdmin ? 'text-primary' : 'text-success'"></i> Norme de Référence
+              </h5>
+              <div class="row g-4">
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-semibold small text-secondary">Norme <span *ngIf="!isAdmin" class="text-danger">*</span></label>
+                  <select formControlName="idNorme" class="form-select" [class.is-invalid]="isSubmitted && f['idNorme'].invalid" [style.pointer-events]="isAdmin ? 'none' : 'auto'" [class.bg-light]="isAdmin">
+                    <option [ngValue]="null">-- Sélectionner une norme --</option>
+                    <option *ngFor="let n of normes" [ngValue]="n.id_norme">{{ n.libelle }}</option>
+                  </select>
+                  <div class="invalid-feedback">La norme est obligatoire.</div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label class="form-label fw-semibold small text-secondary mb-2">
+                    Parties de la norme <span *ngIf="!isAdmin" class="text-muted small fw-normal">(Ctrl / Cmd pour choix multiple) *</span>
+                  </label>
+                  <select multiple
+                          formControlName="idPartie"
+                          class="form-select form-select-lg fs-6"
+                          [class.is-invalid]="isSubmitted && f['idPartie'].invalid"
+                          style="min-height: 140px;"
+                          [style.pointer-events]="isAdmin ? 'none' : 'auto'"
+                          [class.bg-light]="isAdmin">
+                    <option *ngFor="let p of partiesFiltrees" [ngValue]="p.id_partie || p.id">
+                      Partie {{ p.no_partie || p.id_partie }} - {{ p.titre || p.libelle || p.nom_partie }}
+                    </option>
+                  </select>
+                  <div class="invalid-feedback">Veuillez sélectionner au moins une partie de la norme.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4 : Grandeurs de Mesure (Affiche la section uniquement pour l'unité CEREP) -->
+            <div class="mb-5" *ngIf="isCEREP">
+              <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom text-uppercase tracking-wider fs-6" style="color: #4b5563;">
+                <i class="bi bi-sliders me-2" [ngClass]="isAdmin ? 'text-primary' : 'text-success'"></i> Grandeurs de Mesure
+              </h5>
+              <div class="row g-4">
+                <div class="col-12">
+                  <label class="form-label fw-semibold small text-secondary mb-2">
+                    Grandeurs de mesure <span *ngIf="!isAdmin" class="text-muted small fw-normal">(Ctrl / Cmd pour choix multiple) *</span>
+                  </label>
+                  <select multiple class="form-select form-select-lg fs-6" formControlName="grandeurs" [class.is-invalid]="isSubmitted && f['grandeurs'].invalid" style="min-height: 140px;" [style.pointer-events]="isAdmin ? 'none' : 'auto'" [class.bg-light]="isAdmin">
+                    <option *ngFor="let g of grandeurs" [ngValue]="g.id_grandeur">
+                      {{ g.libelle }} <span *ngIf="g.code" class="text-muted">({{ g.code }})</span>
+                    </option>
+                  </select>
+                  <div class="invalid-feedback">Veuillez sélectionner au moins une grandeur de mesure.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions de bas de page (Enregistrer, Fermer, Annuler) -->
+            <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+              <ng-container *ngIf="!isAdmin">
+                <button type="button" (click)="cancel()" class="btn btn-light btn-lg rounded-pill px-4 border text-secondary fs-6">
+                  Annuler
+                </button>
+                <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 fw-semibold text-white fs-6 shadow-sm">
+                  <i class="bi bi-check-circle-fill me-2"></i> {{ isEditMode ? 'Enregistrer les modifications' : 'Créer l\'Essai' }}
+                </button>
+              </ng-container>
+
+              <ng-container *ngIf="isAdmin">
+                <button type="button" (click)="cancel()" class="btn btn-secondary btn-lg rounded-pill px-5 fs-6 shadow-sm">
+                  <i class="bi bi-arrow-left-circle me-2"></i> Fermer la consultation
+                </button>
+              </ng-container>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

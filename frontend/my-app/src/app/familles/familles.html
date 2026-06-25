@@ -1,0 +1,195 @@
+<div class="container-fluid py-4">
+
+  <!-- En-tête de la page -->
+  <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
+    <div>
+      <h3 class="fw-bold text-dark m-0">Gestion des Familles</h3>
+      <p class="text-muted small m-0">Consultez et gérez les familles d'essais et leurs sous-familles</p>
+    </div>
+    <button [routerLink]="['/dashboard-admin/ajouter-famille']" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-semibold d-flex align-items-center gap-2 text-white" type="button">
+      <i class="bi bi-plus-circle-fill"></i> Ajouter une famille
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+
+    <!-- مؤشر تحميل البيانات -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+      <p class="text-muted mt-2 small mb-0">Chargement des familles en cours...</p>
+    </div>
+
+    <!-- جدول عرض العوائل -->
+    <div *ngIf="!isLoading" class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light border-bottom border-light">
+          <tr>
+            <th style="width: 15%" class="ps-4 text-secondary small fw-bold text-uppercase py-3">ID Famille</th>
+            <th style="width: 45%" class="text-secondary small fw-bold text-uppercase py-3">Nom de la Famille</th>
+            <th style="width: 25%" class="text-secondary small fw-bold text-uppercase py-3">Sous-Familles</th>
+            <th style="width: 15%" class="pe-4 text-secondary small fw-bold text-uppercase py-3 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- نمر على مصفوفة paginatedFamillesList المقطعة بالـ Pagination -->
+          <ng-container *ngFor="let f of paginatedFamillesList">
+
+            <!-- وضع تعديل العائلة -->
+            <tr *ngIf="idFamilleEnCoursDEdition === f.id_famille" class="table-warning">
+              <td class="fw-medium text-secondary ps-4">#{{ f.id_famille }}</td>
+              <td>
+                <input type="text" [(ngModel)]="familleModifiee.nom_famille" class="form-control form-control-sm rounded-2 fw-semibold">
+              </td>
+              <td>
+                <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1.5">{{ familleModifiee.sousFamilles?.length || 0 }} en cours</span>
+                <button class="btn btn-sm btn-link text-dark ms-2 p-0 fw-bold text-decoration-none" (click)="f.isOpen = !f.isOpen" type="button">
+                  <i class="bi" [ngClass]="f.isOpen ? 'bi-eye-slash-fill' : 'bi-gear-fill'"></i>
+                  {{ f.isOpen ? 'Masquer' : 'Gérer' }}
+                </button>
+              </td>
+              <td class="text-center pe-4">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="enregistrerModification(f.id_famille)" class="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold text-white" type="button">
+                    <i class="bi bi-check-lg"></i> Valider
+                  </button>
+                  <button (click)="annulerModification()" class="btn btn-sm btn-light border rounded-pill px-3 py-1 text-secondary" type="button">
+                    Annuler
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- وضع العرض العادي للعائلة -->
+            <tr *ngIf="idFamilleEnCoursDEdition !== f.id_famille">
+              <td class="fw-medium text-secondary ps-4">#{{ f.id_famille }}</td>
+              <td class="fw-semibold text-dark">{{ f.nom_famille }}</td>
+              <td>
+                <span class="badge rounded-pill fw-semibold px-3 py-1.5"
+                      [ngClass]="(f.sousFamilles?.length || 0) > 0 ? 'bg-info-subtle text-info border border-info-subtle' : 'bg-light text-muted border'">
+                  {{ f.sousFamilles?.length || 0 }} sous-famille(s)
+                </span>
+                <button class="btn btn-sm btn-link text-secondary ms-2 p-0" (click)="toggleSection(f)" type="button">
+                  <i class="bi" [ngClass]="f.isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+              </td>
+              <td class="text-center pe-4">
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="activerModification(f)" class="btn btn-sm btn-outline-primary border-0 rounded-circle p-2" title="Modifier" type="button">
+                    <i class="bi bi-pencil-square fs-5"></i>
+                  </button>
+                  <button (click)="supprimerFamille(f.id_famille)" class="btn btn-sm btn-outline-danger border-0 rounded-circle p-2" title="Supprimer" type="button">
+                    <i class="bi bi-trash3 fs-5"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- تفاصيل وإدارة العوائل الفرعية المنسدلة -->
+            <tr *ngIf="f.isOpen">
+              <td colspan="4" class="bg-light-subtle p-3">
+                <div class="ps-4 border-start border-2" [ngClass]="idFamilleEnCoursDEdition === f.id_famille ? 'border-warning' : 'border-info'">
+
+                  <!-- العوائل الفرعية في وضع التعديل -->
+                  <div *ngIf="idFamilleEnCoursDEdition === f.id_famille">
+                    <h6 class="text-warning small fw-bold text-uppercase mb-2">Modifier les sous-familles :</h6>
+                    <div class="input-group input-group-sm mb-3" style="max-width: 400px;">
+                      <input type="text" [(ngModel)]="nouvelleSousFamille" class="form-control" placeholder="Nom de la sous-famille...">
+                      <button class="btn btn-warning fw-bold text-dark" type="button" (click)="addSousFamilleForm()">+ Ajouter</button>
+                    </div>
+
+                    <ul class="list-group list-group-flush rounded-3 border" style="max-width: 500px;" *ngIf="(familleModifiee.sousFamilles?.length || 0) > 0">
+                      <li *ngFor="let sf of familleModifiee.sousFamilles; let i = index" class="list-group-item d-flex justify-content-between align-items-center bg-white py-2 px-3">
+                        <span class="text-dark fw-medium">{{ sf.libelle }}</span>
+                        <button type="button" (click)="removeSousFamilleForm(i)" class="btn btn-sm btn-link text-danger p-0 border-0">
+                          <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                      </li>
+                    </ul>
+                    <p *ngIf="(familleModifiee.sousFamilles?.length || 0) === 0" class="text-muted small mb-0">Aucune sous-famille pour le moment. Ajoutez-en une !</p>
+                  </div>
+
+                  <!-- العوائل الفرعية في وضع العرض العادي -->
+                  <div *ngIf="idFamilleEnCoursDEdition !== f.id_famille">
+                    <div *ngIf="(f.sousFamilles?.length || 0) > 0">
+                      <h6 class="text-info small fw-bold text-uppercase mb-2">Liste des sous-familles :</h6>
+                      <ul class="list-group list-group-flush rounded-3 border" style="max-width: 500px;">
+                        <li *ngFor="let sf of f.sousFamilles" class="list-group-item d-flex justify-content-between align-items-center bg-white py-2 px-3">
+                          <span class="text-dark fw-medium">{{ sf.libelle }}</span>
+                          <span class="text-muted small">ID: #{{ sf.id_sous_famille }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <p *ngIf="(f.sousFamilles?.length || 0) === 0" class="text-muted small mb-0">Aucune sous-famille enregistrée.</p>
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+
+          </ng-container>
+
+          <!-- سطر يعرض في حالة فراغ النتائج بعد الفلترة -->
+          <tr *ngIf="filteredFamillesList.length === 0">
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-folder-x display-5 d-block mb-2 opacity-50"></i>
+              Aucune famille trouvée pour cette recherche.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📊 شريط أدوات الـ Pagination والمؤشرات التفاعلية في الأسفل -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 p-4 border-top border-light bg-light-subtle"
+         *ngIf="!isLoading && filteredFamillesList.length > 0">
+
+      <!-- إحصائية مؤشر السجلات المعروضة حالياً -->
+      <span class="text-muted small">
+        Affichage de <strong class="text-dark">{{ startRecordIndex }}</strong> à <strong class="text-dark">{{ endRecordIndex }}</strong> sur <strong class="text-dark">{{ filteredFamillesList.length }}</strong> familles
+      </span>
+
+      <!-- أزرار التنقل والصفحات تظهر عند تجاوز صفحة واحدة -->
+      <nav *ngIf="totalPages > 1" aria-label="Pagination">
+        <ul class="pagination pagination-sm m-0 gap-1 border-0">
+
+          <!-- زر الانتقال للصفحة السابقة -->
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="prevPage()"
+                    [disabled]="currentPage === 1"
+                    style="width: 32px; height: 32px;"
+                    title="Précédent"
+                    type="button">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+
+          <!-- أرقام الصفحات النشطة -->
+          <li class="page-item" *ngFor="let page of pagesArray" [class.active]="currentPage === page">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center"
+                    (click)="goToPage(page)"
+                    [ngStyle]="currentPage === page ? {'background-color': '#0d6efd', 'color': '#ffffff', 'border-color': '#0d6efd'} : {'background-color': '#ffffff', 'color': '#495057', 'border-color': '#dee2e6'}"
+                    style="width: 32px; height: 32px; font-weight: 600;"
+                    type="button">
+              {{ page }}
+            </button>
+          </li>
+
+          <!-- زر الانتقال للصفحة التالية -->
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="nextPage()"
+                    [disabled]="currentPage === totalPages"
+                    style="width: 32px; height: 32px;"
+                    title="Suivant"
+                    type="button">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</div>

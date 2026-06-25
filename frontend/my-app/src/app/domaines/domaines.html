@@ -1,0 +1,151 @@
+<div class="container-fluid py-4">
+
+  <!-- En-tête de la page -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark m-0">Domaines d'Activité</h3>
+      <p class="text-muted small m-0">Gérez les grands secteurs et domaines d'activité des essais</p>
+    </div>
+    <button (click)="openAddModal()" class="btn btn-success rounded-pill px-4 fw-medium shadow-sm d-flex align-items-center gap-2" type="button">
+      <i class="bi bi-plus-circle-fill"></i> Ajouter un domaine
+    </button>
+  </div>
+
+  <!-- Carte contenant le tableau -->
+  <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light border-bottom border-light">
+          <tr>
+            <th class="ps-4 text-secondary small fw-bold text-uppercase py-3" style="width: 15%;">ID Domaine</th>
+            <th class="text-secondary small fw-bold text-uppercase py-3">Libellé / Secteur</th>
+            <th class="pe-4 text-secondary small fw-bold text-uppercase py-3 text-end" style="width: 25%;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- نمر على مصفوفة domaines المقطعة والمدعومة بالـ Pagination من ملف الـ TS -->
+          <tr *ngFor="let dom of domaines">
+            <td class="ps-4 fw-bold text-secondary">#{{ dom.id_domaine }}</td>
+            <td class="fw-semibold text-dark">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-tag-fill text-success opacity-75"></i>
+                {{ dom.libelle }}
+              </div>
+            </td>
+            <td class="pe-4 text-end">
+              <div class="d-flex justify-content-end gap-2">
+                <button (click)="openEditModal(dom)" class="btn btn-outline-primary btn-sm border-0 p-2 rounded-circle" title="Modifier" type="button">
+                  <i class="bi bi-pencil-square fs-5"></i>
+                </button>
+                <button (click)="deleteDomaine(dom.id_domaine)" class="btn btn-outline-danger btn-sm border-0 p-2 rounded-circle" title="Supprimer" type="button">
+                  <i class="bi bi-trash3 fs-5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- سطر العرض الفارغ في حال انعدام نتائج البحث والفلترة -->
+          <tr *ngIf="filteredDomaines.length === 0">
+            <td colspan="3" class="text-center py-5 text-muted">
+              <i class="bi bi-tags fs-1 d-block mb-2 text-secondary"></i>
+              Aucun domaine d'activité trouvé.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 📊 شريط أدوات الـ Pagination والمؤشرات الديناميكية أسفل الجدول -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 p-4 border-top border-light bg-light-subtle"
+         *ngIf="filteredDomaines.length > 0">
+
+      <!-- إحصائية مؤشرات العرض النشطة -->
+      <span class="text-muted small">
+        Affichage de <strong class="text-dark">{{ startRecordIndex }}</strong> à <strong class="text-dark">{{ endRecordIndex }}</strong> sur <strong class="text-dark">{{ filteredDomaines.length }}</strong> entrées
+      </span>
+
+      <!-- أزرار التنقل والصفحات تظهر فقط إذا كان هناك أكثر من صفحة واحدة -->
+      <nav *ngIf="totalPages > 1" aria-label="Pagination">
+        <ul class="pagination pagination-sm m-0 gap-1 border-0">
+
+          <!-- زر الانتقال للصفحة السابقة -->
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="prevPage()"
+                    [disabled]="currentPage === 1"
+                    style="width: 32px; height: 32px;"
+                    title="Précédent"
+                    type="button">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          </li>
+
+          <!-- أرقام الصفحات النشطة -->
+          <li class="page-item" *ngFor="let page of pagesArray" [class.active]="currentPage === page">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center"
+                    (click)="goToPage(page)"
+                    [ngStyle]="currentPage === page ? {'background-color': '#198754', 'color': '#ffffff', 'border-color': '#198754'} : {'background-color': '#ffffff', 'color': '#495057', 'border-color': '#dee2e6'}"
+                    style="width: 32px; height: 32px; font-weight: 600;"
+                    type="button">
+              {{ page }}
+            </button>
+          </li>
+
+          <!-- زر الانتقال للصفحة التالية -->
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link rounded-circle border d-flex align-items-center justify-content-center p-0"
+                    (click)="nextPage()"
+                    [disabled]="currentPage === totalPages"
+                    style="width: 32px; height: 32px;"
+                    title="Suivant"
+                    type="button">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          </li>
+
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal d'Ajout / Modification d'un domaine -->
+<div class="modal fade show d-block" *ngIf="showModal" style="background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <div class="modal-header border-bottom border-light p-4 bg-white">
+        <h5 class="modal-title fw-bold text-dark m-0">
+          <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square text-primary' : 'bi-plus-circle text-success'"></i>
+          {{ isEditMode ? 'Modifier' : 'Ajouter' }} un Domaine
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <form [formGroup]="domaineForm" (ngSubmit)="save()" novalidate>
+        <div class="modal-body p-4 bg-white">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small text-secondary">Désignation du Domaine <span class="text-danger">*</span></label>
+            <input type="text" formControlName="libelle" class="form-control form-control-lg fs-6"
+                   [class.is-invalid]="isSubmitted && f['libelle'].invalid" placeholder="Ex: Route, Bâtiment, Eau & Environnement">
+            <div class="invalid-feedback">Le nom du domaine d'activité est obligatoire.</div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer p-3 border-top border-light bg-light d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-light rounded-pill px-4 border text-secondary" (click)="closeModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn rounded-pill px-4 fw-semibold text-white"
+                  [ngClass]="isEditMode ? 'btn-primary' : 'btn-success'">
+            {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

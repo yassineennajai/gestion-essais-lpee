@@ -1,0 +1,30 @@
+.card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.table th {
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #fcfdfd;
+}
+
+.btn-sm i {
+  line-height: 1;
+}
+
+.btn-outline-primary:hover {
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+}
+
+.btn-outline-danger:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}

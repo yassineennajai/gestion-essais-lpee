@@ -1,0 +1,114 @@
+/* Custom Professional Dashboard Design */
+.dashboard-container {
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.custom-card {
+  background: #ffffff;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.table-modern thead th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 24px;
+}
+
+.table-modern tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.table-modern tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table-modern tbody td {
+  padding: 16px 24px;
+  color: #334155;
+}
+
+/* Avatar Circle Minimalist */
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+/* Elegant Badges */
+.badge-admin {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.badge-user {
+  background-color: #f0fdf4;
+  color: #166534;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.badge-none {
+  background-color: #fef2f2;
+  color: #991b1b;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+/* Actions Rounded Minimalist Buttons */
+.btn-action-edit {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-action-edit:hover {
+  background-color: #16a34a;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.btn-action-delete {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-action-delete:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  transform: translateY(-2px);
+}

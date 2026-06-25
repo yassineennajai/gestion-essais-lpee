@@ -1,0 +1,123 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-white border-bottom border-light py-4 px-4 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-3 rounded-3" [ngClass]="isEditMode ? 'bg-warning-light text-warning' : 'bg-primary-light text-primary'" style="background-color: #f0f4ff;">
+              <i class="bi fs-4" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+            </div>
+            <div>
+              <h4 class="m-0 fw-bold text-dark">{{ isEditMode ? 'Modifier l\'utilisateur' : 'Ajouter un utilisateur' }}</h4>
+              <p class="text-muted small m-0">Veuillez renseigner les informations du compte</p>
+            </div>
+          </div>
+
+          <button (click)="cancel()" class="btn btn-light btn-sm rounded-pill px-3 border">
+            <i class="bi bi-arrow-left me-1"></i> Retour
+          </button>
+        </div>
+
+        <div class="card-body p-4 px-md-5">
+          <form [formGroup]="userForm" (ngSubmit)="save()" novalidate>
+
+            <div class="row g-4">
+
+              <div class="col-12">
+                <label class="form-label fw-semibold text-secondary">Adresse Email <span class="text-danger">*</span></label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text bg-light" [ngClass]="{'border-danger text-danger': (isSubmitted || f['email'].touched) && f['email'].invalid, 'border-end-0': !((isSubmitted || f['email'].touched) && f['email'].invalid)}">
+                    <i class="bi bi-envelope" [ngClass]="{'text-muted': !((isSubmitted || f['email'].touched) && f['email'].invalid)}"></i>
+                  </span>
+                  <input
+                    type="email"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': (isSubmitted || f['email'].touched) && f['email'].invalid, 'border-start-0': !((isSubmitted || f['email'].touched) && f['email'].invalid) }"
+                    formControlName="email"
+                    placeholder="exemple@lpee.ma"
+                  >
+                  <div *ngIf="(isSubmitted || f['email'].touched) && f['email'].errors" class="invalid-feedback">
+                    <div *ngIf="f['email'].errors['required']">L'adresse email est obligatoire.</div>
+                    <div *ngIf="f['email'].errors['email']">Veuillez saisir une adresse email valide.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12" *ngIf="!isEditMode">
+                <label class="form-label fw-semibold text-secondary">Mot de passe <span class="text-danger">*</span></label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text bg-light" [ngClass]="{'border-danger text-danger': (isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].invalid, 'border-end-0': !((isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].invalid)}">
+                    <i class="bi bi-lock" [ngClass]="{'text-muted': !((isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].invalid)}"></i>
+                  </span>
+                  <input
+                    type="password"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': (isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].invalid, 'border-start-0': !((isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].invalid) }"
+                    formControlName="mot_de_passe"
+                    placeholder="••••••••"
+                  >
+                  <div *ngIf="(isSubmitted || f['mot_de_passe'].touched) && f['mot_de_passe'].errors" class="invalid-feedback">
+                    <div *ngIf="f['mot_de_passe'].errors['required']">Le mot de passe est obligatoire.</div>
+                    <div *ngIf="f['mot_de_passe'].errors['minlength']">Le mot de passe doit contenir au moins 6 caractères.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-secondary">Rôle <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
+                  <select class="form-select border-start-0" formControlName="id_role">
+                    <option [ngValue]="1">Administrateur</option>
+                    <option [ngValue]="2">Utilisateur</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-secondary">Unité de rattachement <span class="text-danger">*</span></label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text bg-light" [ngClass]="{'border-danger text-danger': (isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid, 'border-end-0': !((isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid)}">
+                    <i class="bi bi-building" [ngClass]="{'text-muted': !((isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid)}"></i>
+                  </span>
+                  <select
+                    class="form-select"
+                    [ngClass]="{ 'is-invalid': (isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid, 'border-start-0': !((isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid) }"
+                    formControlName="id_unite"
+                  >
+                    <option [ngValue]="null" disabled>Sélectionner une unité</option>
+
+                    <option *ngFor="let unite of uniteList" [ngValue]="unite.id_unite">
+                      {{ unite.nom_unite || unite.libelle }}
+                    </option>
+                  </select>
+
+                  <div *ngIf="(isSubmitted || f['id_unite'].touched) && f['id_unite'].invalid" class="invalid-feedback">
+                    Veuillez sélectionner une unité de rattachement.
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <hr class="text-muted opacity-10 my-4">
+
+            <div class="d-flex justify-content-end gap-3">
+              <button type="button" (click)="cancel()" class="btn btn-light btn-lg rounded-pill px-4 text-secondary fs-6 border fw-medium">
+                Annuler
+              </button>
+              <button type="submit" class="btn btn-lg rounded-pill px-4 fw-semibold text-white" [ngClass]="isEditMode ? 'btn-warning' : 'btn-primary'">
+                <i class="bi me-2" [ngClass]="isEditMode ? 'bi-check-circle-fill' : 'bi-plus-circle-fill'"></i>
+                {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="container-fluid py-4 animate-fade-in">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+
+        <div class="card-header bg-white border-bottom border-light py-4 px-4 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+
+            <div class="p-3 rounded-3 d-flex align-items-center justify-content-center"
+                 [ngClass]="isEditMode ? 'bg-warning bg-opacity-10 text-warning' : 'bg-primary bg-opacity-10 text-primary'"
+                 style="width: 54px; height: 54px;">
+              <i class="bi fs-4" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-building-plus'"></i>
+            </div>
+            <div>
+              <h4 class="m-0 fw-bold text-dark">{{ isEditMode ? 'Modifier l\'unité' : 'Ajouter une unité' }}</h4>
+              <p class="text-muted small m-0">Veuillez renseigner les informations ci-dessous</p>
+            </div>
+          </div>
+
+          <button (click)="cancel()" class="btn btn-light btn-sm rounded-pill px-3 border d-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Retour
+          </button>
+        </div>
+
+        <div class="card-body p-4 px-md-5">
+          <form [formGroup]="uniteForm" (ngSubmit)="save()" novalidate>
+
+            <div class="row g-4">
+
+
+              <div class="col-12">
+                <label class="form-label fw-semibold text-secondary">Libellé de l'unité <span class="text-danger">*</span></label>
+                <div class="input-group has-validation">
+
+                  <span class="input-group-text bg-light border-end-0"
+                        [ngClass]="{'border-danger text-danger': (isSubmitted || f['libelle'].touched) && f['libelle'].invalid}">
+                    <i class="bi bi-building" [ngClass]="{'text-muted': !((isSubmitted || f['libelle'].touched) && f['libelle'].invalid)}"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': (isSubmitted || f['libelle'].touched) && f['libelle'].invalid }"
+                    formControlName="libelle"
+                    placeholder="Ex: Direction Technique">
+
+                  <div *ngIf="(isSubmitted || f['libelle'].touched) && f['libelle'].invalid" class="invalid-feedback">
+                    Le libellé de l'unité est obligatoire.
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold text-secondary">La Ville <span class="text-danger">*</span></label>
+                <div class="input-group has-validation">
+                  <span class="input-group-text bg-light border-end-0"
+                        [ngClass]="{'border-danger text-danger': (isSubmitted || f['la_ville'].touched) && f['la_ville'].invalid}">
+                    <i class="bi bi-geo-alt" [ngClass]="{'text-muted': !((isSubmitted || f['la_ville'].touched) && f['la_ville'].invalid)}"></i>
+                  </span>
+
+                  <select
+                    class="form-select"
+                    [compareWith]="compareVilles"
+                    [ngClass]="{ 'is-invalid': (isSubmitted || f['la_ville'].touched) && f['la_ville'].invalid }"
+                    formControlName="la_ville">
+                    <option [ngValue]="null" disabled>-- Choisir une ville --</option>
+                    <option *ngFor="let v of villes" [ngValue]="v">
+                      {{ v.nom_ville }}
+                    </option>
+                  </select>
+
+                  <div *ngIf="(isSubmitted || f['la_ville'].touched) && f['la_ville'].invalid" class="invalid-feedback">
+                    Veuillez sélectionner une ville.
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold text-secondary">Contact</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="contact"
+                    placeholder="Ex: +212 5XX XXX XXX">
+                </div>
+              </div>
+
+
+              <div class="col-12">
+                <label class="form-label fw-semibold text-secondary">Type d'unité <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0"><i class="bi bi-tags text-muted"></i></span>
+                  <select class="form-select" formControlName="type">
+                    <option value="Public">Unité régionale</option>
+                    <option value="Privé">Unité spécialisée</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+            <hr class="text-muted opacity-10 my-4">
+
+    
+            <div class="d-flex justify-content-end gap-3">
+              <button
+                type="button"
+                (click)="cancel()"
+                class="btn btn-light btn-lg rounded-pill px-4 text-secondary fs-6 border fw-medium">
+                Annuler
+              </button>
+
+              <button
+                type="submit"
+                class="btn btn-lg rounded-pill px-4 fw-semibold text-white d-flex align-items-center gap-2"
+                [ngClass]="isEditMode ? 'btn-warning' : 'btn-primary'">
+                <i class="bi" [ngClass]="isEditMode ? 'bi-check-circle-fill' : 'bi-plus-circle-fill'"></i>
+                {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
