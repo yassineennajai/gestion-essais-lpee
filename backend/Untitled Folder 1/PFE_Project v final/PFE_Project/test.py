@@ -1,0 +1,1 @@
+result = df.groupby('Product line')['Quantity'].sum().sort_values(ascending=False).head(5)

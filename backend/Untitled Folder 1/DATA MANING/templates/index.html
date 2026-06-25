@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Love Supreme - YASSINE & MARYAM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a0b1a 0%, #2a0f2a 40%, #1f0c1f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Arial', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            cursor: pointer;
+        }
+
+        /* floating particles / romantic sparkles */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(255,215,150,0.9) 0%, rgba(255,100,150,0.6) 100%);
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: floatGlow 3s ease-out forwards;
+            z-index: 5;
+        }
+
+        @keyframes floatGlow {
+            0% {
+                transform: scale(0) translateY(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5) translateY(-120px) rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        /* main container */
+        .love-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            z-index: 10;
+        }
+
+        .double-heart {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin: 20px 0;
+        }
+
+        /* heart card */
+        .heart-card {
+            position: relative;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)) drop-shadow(0 0 12px rgba(255,80,120,0.6));
+            transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.8, 1);
+        }
+        .heart-card:hover {
+            transform: scale(1.02);
+        }
+
+        .heart-shape {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            background: #e31b23;
+            background: linear-gradient(135deg, #ff3366, #e31b23, #c41e3a);
+            transform: rotate(-45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 0 4px rgba(255,200,200,0.3), inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .heart-shape::before,
+        .heart-shape::after {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        .heart-shape::before {
+            top: -140px;
+            left: 0;
+        }
+
+        .heart-shape::after {
+            left: 140px;
+            top: 0;
+        }
+
+        .inner-text {
+            transform: rotate(45deg);
+            color: #fff8f0;
+            font-weight: 800;
+            font-size: clamp(28px, 7vw, 44px);
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 8px rgba(255,215,0,0.8);
+            z-index: 2;
+            font-family: 'Segoe UI', 'Poppins', cursive;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 16px;
+            border-radius: 60px;
+            backdrop-filter: blur(3px);
+            white-space: nowrap;
+        }
+
+        /* ring central */
+        .ring-union {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 15px rgba(255,105,180,0.8));
+            animation: floatRing 2s infinite alternate ease-in-out;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .ring-union:active {
+            transform: scale(0.95);
+        }
+
+        .diamond-ring {
+            font-size: 85px;
+            filter: drop-shadow(0 0 8px gold);
+            transition: all 0.2s;
+            animation: ringGlow 1.2s infinite alternate;
+        }
+
+        .ring-label {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 8px 18px;
+            border-radius: 60px;
+            margin-top: 12px;
+            font-weight: bold;
+            color: #ffddbb;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255,215,0,0.6);
+            font-family: monospace;
+        }
+
+        /* love banner */
+        .romantic-banner {
+            margin-top: 45px;
+            text-align: center;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
+            padding: 12px 32px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 140, 170, 0.7);
+            box-shadow: 0 0 25px rgba(255,80,100,0.4);
+        }
+
+        .banner-text {
+            font-size: 1.6rem;
+            font-weight: bold;
+            background: linear-gradient(120deg, #ffb7c5, #ff6a88, #ffdf80);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            animation: shimmer 3s infinite;
+        }
+
+        /* small floating hearts background */
+        .floating-bg-heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 24px;
+            opacity: 0.2;
+            pointer-events: none;
+            animation: riseHeart 12s linear infinite;
+            z-index: 0;
+        }
+
+        /* beat animation for hearts (pulse) */
+        .heart-beat {
+            animation: heartPulse 1s infinite ease-in-out;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: rotate(-45deg) scale(1); }
+            25% { transform: rotate(-45deg) scale(1.08); }
+            50% { transform: rotate(-45deg) scale(1.18); }
+            75% { transform: rotate(-45deg) scale(1.08); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+
+        /* Ring bounce */
+@keyframes floatRing {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-12px); }
+}
+
+/* Ring glow */
+@keyframes ringGlow {
+    0% { 
+        text-shadow: 0 0 2px #ffaa88; 
+        filter: drop-shadow(0 0 3px gold); 
+    }
+    100% { 
+        text-shadow: 0 0 18px #ff66aa; 
+        filter: drop-shadow(0 0 20px rgb(255, 100, 150));
+    }
+}
+
+/* Apply animations to the ring */
+.ring {
+    font-size: 60px;
+    animation: floatRing 1s infinite alternate, ringGlow 1.5s infinite alternate;
+}
+        @keyframes shimmer {
+            0% { background-position: -200%; }
+            100% { background-position: 200%; }
+        }
+
+        @keyframes riseHeart {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.25;
+            }
+            100% {
+                transform: translateY(-120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* responsive */
+        @media (max-width: 780px) {
+            .double-heart {
+                gap: 30px;
+            }
+            .heart-shape {
+                width: 200px;
+                height: 200px;
+            }
+            .heart-shape::before,
+            .heart-shape::after {
+                width: 200px;
+                height: 200px;
+            }
+            .heart-shape::before { top: -100px; }
+            .heart-shape::after { left: 100px; }
+            .inner-text {
+                font-size: 28px;
+                white-space: nowrap;
+            }
+            .diamond-ring {
+                font-size: 60px;
+            }
+            .banner-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .double-heart {
+                flex-direction: column;
+                gap: 40px;
+            }
+            .inner-text {
+                font-size: 26px;
+            }
+            .ring-union {
+                margin: 10px 0;
+            }
+        }
+
+        /* interactive click effect */
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,200,150,0.8) 0%, rgba(255,80,120,0) 70%);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out forwards;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(10);
+                opacity: 0;
+            }
+        }
+
+        /* little loving corner */
+        .corner-love {
+            position: fixed;
+            bottom: 15px;
+            right: 20px;
+            font-size: 14px;
+            color: #ffa7b0;
+            background: rgba(0,0,0,0.4);
+            padding: 5px 12px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            font-family: monospace;
+            z-index: 20;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="love-stage">
+    <div class="double-heart">
+        <!-- YASSINE Heart -->
+        <div class="heart-card">
+            <div class="heart-shape heart-beat" id="heartYassine">
+                <div class="inner-text">💖 YASSINE 💖</div>
+            </div>
+        </div>
+
+        <!-- Central Ring with Sparkle Connection -->
+        <div class="ring-union" id="ringUnity">
+            <div class="diamond-ring" id="diamondRing">💍✨💎</div>
+            <div class="ring-label">♾️ ÉTERNEL ♾️</div>
+        </div>
+
+        <!-- MARYAM Heart -->
+        <div class="heart-card">
+            <div class="heart-shape heart-beat" id="heartMaryam">
+                <div class="inner-text">🌸 MARYAM 🌸</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="romantic-banner">
+        <div class="banner-text">💘 L'AMOUR INFINI 💘 <span style="display: inline-block; animation: ring-bounce 1s infinite;">💍</span> YASSINE 🤍 MARYAM</div>
+    </div>
+</div>
+
+<div class="corner-love">
+    ❤️ clique n'importe où pour des étincelles d'amour ❤️
+</div>
+
+<script>
+    (function() {
+        // === CREATE BACKGROUND FLOATING HEARTS (more romantic) ===
+        function createFloatingHeart() {
+            const heartEl = document.createElement('div');
+            heartEl.classList.add('floating-bg-heart');
+            const icons = ['❤️', '💖', '💗', '💘', '💕', '💞', '💝', '🌸', '🌹', '✨'];
+            heartEl.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+            heartEl.style.left = Math.random() * 100 + '%';
+            heartEl.style.fontSize = Math.floor(18 + Math.random() * 38) + 'px';
+            heartEl.style.animationDuration = 8 + Math.random() * 12 + 's';
+            heartEl.style.animationDelay = Math.random() * 5 + 's';
+            heartEl.style.opacity = 0.2 + Math.random() * 0.4;
+            document.body.appendChild(heartEl);
+            setTimeout(() => {
+                if(heartEl && heartEl.remove) heartEl.remove();
+            }, 15000);
+        }
+
+        // launch floating hearts periodically
+        setInterval(() => {
+            createFloatingHeart();
+        }, 800);
+        for(let i=0;i<12;i++) setTimeout(() => createFloatingHeart(), i*300);
+
+        // === SPARKLE EFFECT ON CLICK (anywhere) ===
+        function createSparkle(x, y) {
+            const spark = document.createElement('div');
+            spark.classList.add('sparkle');
+            const size = 8 + Math.random() * 20;
+            spark.style.width = size + 'px';
+            spark.style.height = size + 'px';
+            spark.style.left = (x - size/2) + 'px';
+            spark.style.top = (y - size/2) + 'px';
+            spark.style.background = `radial-gradient(circle, rgba(255, ${150 + Math.random() * 105}, ${100 + Math.random() * 100}, 0.9) 0%, rgba(255,80,120,0.5) 100%)`;
+            spark.style.boxShadow = '0 0 12px gold';
+            document.body.appendChild(spark);
+            setTimeout(() => spark.remove(), 800);
+        }
+
+        function createRippleEffect(x, y) {
+            const rippleDiv = document.createElement('div');
+            rippleDiv.classList.add('click-ripple');
+            rippleDiv.style.left = x + 'px';
+            rippleDiv.style.top = y + 'px';
+            rippleDiv.style.width = '20px';
+            rippleDiv.style.height = '20px';
+            rippleDiv.style.transform = 'translate(-50%, -50%) scale(0)';
+            document.body.appendChild(rippleDiv);
+            setTimeout(() => rippleDiv.remove(), 600);
+        }
+
+        // also generate mini heart burst near ring & hearts on click
+        function burstMiniHearts(centerX, centerY) {
+            for(let i=0; i<8; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 15 + Math.random() * 35;
+                const offX = Math.cos(angle) * dist;
+                const offY = Math.sin(angle) * dist;
+                const miniHeart = document.createElement('div');
+                miniHeart.innerHTML = ['❤️','💖','💕','💘','💍'][Math.floor(Math.random()*5)];
+                miniHeart.style.position = 'fixed';
+                miniHeart.style.left = (centerX + offX) + 'px';
+                miniHeart.style.top = (centerY + offY) + 'px';
+                miniHeart.style.fontSize = '18px';
+                miniHeart.style.pointerEvents = 'none';
+                miniHeart.style.zIndex = '9999';
+                miniHeart.style.opacity = '1';
+                miniHeart.style.filter = 'drop-shadow(0 0 2px red)';
+                miniHeart.style.transition = 'all 0.5s ease-out';
+                document.body.appendChild(miniHeart);
+                setTimeout(() => {
+                    if(miniHeart) {
+                        miniHeart.style.transform = 'translateY(-40px) scale(0.8)';
+                        miniHeart.style.opacity = '0';
+                        setTimeout(() => miniHeart.remove(), 500);
+                    }
+                }, 20);
+            }
+        }
+
+        // global click listener
+        document.body.addEventListener('click', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            createRippleEffect(x, y);
+            for(let i=0;i<6;i++) {
+                setTimeout(() => createSparkle(x + (Math.random() - 0.5) * 40, y + (Math.random() - 0.5) * 40), i*20);
+            }
+            burstMiniHearts(x, y);
+            // also play with ring pulse
+            const ringDiv = document.getElementById('diamondRing');
+            if(ringDiv) {
+                ringDiv.style.transform = 'scale(1.2)';
+                setTimeout(() => { if(ringDiv) ringDiv.style.transform = ''; }, 200);
+            }
+        });
+
+        // make hearts interactive on hover -> extra glow and mini floating
+        const heartLeft = document.getElementById('heartYassine');
+        const heartRight = document.getElementById('heartMaryam');
+        const ringElement = document.getElementById('ringUnity');
+
+        function addGlow(element, intensity = 0.5) {
+            if(element) {
+                element.style.filter = `drop-shadow(0 0 ${12+intensity*8}px rgba(255,80,120,0.9))`;
+            }
+        }
+        function removeGlow(element) {
+            if(element) element.style.filter = '';
+        }
+
+        if(heartLeft) {
+            heartLeft.addEventListener('mouseenter', () => {
+                heartLeft.style.filter = 'drop-shadow(0 0 20px #ff6699) drop-shadow(0 0 8px gold)';
+                createLocalFloatingNames('YASSINE', heartLeft);
+            });
+            heartLeft.addEventListener('mouseleave', () => {
+                heartLeft.style.filter = '';
+            });
+        }
+        if(heartRight) {
+            heartRight.addEventListener('mouseenter', () => {
+                heartRight.style.filter = 'drop-shadow(0 0 20px #ff88aa) drop-shadow(0 0 8px #ffc0cb)';
+                createLocalFloatingNames('MARYAM', heartRight);
+            });
+            heartRight.addEventListener('mouseleave', () => {
+                heartRight.style.filter = '';
+            });
+        }
+
+        function createLocalFloatingNames(name, targetEl) {
+            const rect = targetEl.getBoundingClientRect();
+            const centerX = rect.left + rect.width/2;
+            const centerY = rect.top + rect.height/2;
+            for(let i=0;i<5;i++) {
+                const floatSpan = document.createElement('div');
+                floatSpan.innerText = name === 'YASSINE' ? '💙 ياسين 💙' : '🌸 مريم 🌸';
+                floatSpan.style.position = 'fixed';
+                floatSpan.style.left = centerX + (Math.random() - 0.5)*80 + 'px';
+                floatSpan.style.top = centerY + (Math.random() - 0.5)*70 + 'px';
+                floatSpan.style.fontSize = '18px';
+                floatSpan.style.fontWeight = 'bold';
+                floatSpan.style.color = '#ffefcf';
+                floatSpan.style.textShadow = '0 0 8px crimson';
+                floatSpan.style.pointerEvents = 'none';
+                floatSpan.style.zIndex = '999';
+                floatSpan.style.opacity = '0.9';
+                floatSpan.style.transition = 'transform 0.6s ease-out, opacity 0.6s';
+                floatSpan.style.background = 'rgba(0,0,0,0.3)';
+                floatSpan.style.padding = '2px 8px';
+                floatSpan.style.borderRadius = '30px';
+                floatSpan.style.backdropFilter = 'blur(6px)';
+                document.body.appendChild(floatSpan);
+                setTimeout(() => {
+                    floatSpan.style.transform = 'translateY(-50px) scale(1.2)';
+                    floatSpan.style.opacity = '0';
+                    setTimeout(() => floatSpan.remove(), 700);
+                }, 50);
+            }
+        }
+
+        // Ring click special: add lots of heart explosion + message
+        if(ringElement) {
+            ringElement.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const rect = ringElement.getBoundingClientRect();
+                const x = rect.left + rect.width/2;
+                const y = rect.top + rect.height/2;
+                // big burst
+                for(let i=0;i<30;i++) {
+                    setTimeout(() => {
+                        const angle = Math.random() * Math.PI * 2;
+                        const rad = 30 + Math.random() * 70;
+                        const offX = Math.cos(angle) * rad;
+                        const offY = Math.sin(angle) * rad;
+                        const heartFly = document.createElement('div');
+                        heartFly.innerHTML = ['💍','💖','💗','💕','💞','💘','✨','💎'][Math.floor(Math.random()*8)];
+                        heartFly.style.position = 'fixed';
+                        heartFly.style.left = (x + offX) + 'px';
+                        heartFly.style.top = (y + offY) + 'px';
+                        heartFly.style.fontSize = '26px';
+                        heartFly.style.transition = 'all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.2)';
+                        heartFly.style.pointerEvents = 'none';
+                        heartFly.style.zIndex = '10000';
+                        heartFly.style.filter = 'drop-shadow(0 0 4px gold)';
+                        document.body.appendChild(heartFly);
+                        setTimeout(() => {
+                            heartFly.style.transform = `translate(${(Math.random() - 0.5)*150}px, ${-80 - Math.random()*120}px) scale(1.5)`;
+                            heartFly.style.opacity = '0';
+                            setTimeout(() => heartFly.remove(), 800);
+                        }, 20);
+                    }, i*25);
+                }
+                // also show a sweet floating message
+                const msgDiv = document.createElement('div');
+                msgDiv.innerText = '💞 YASSINE 💍 MARYAM 💞 UNIS POUR TOUJOURS 💞';
+                msgDiv.style.position = 'fixed';
+                msgDiv.style.left = '50%';
+                msgDiv.style.top = '40%';
+                msgDiv.style.transform = 'translate(-50%, -50%)';
+                msgDiv.style.background = 'linear-gradient(135deg, #ff3366, #ff88aa)';
+                msgDiv.style.color = 'white';
+                msgDiv.style.padding = '18px 28px';
+                msgDiv.style.borderRadius = '60px';
+                msgDiv.style.fontWeight = 'bold';
+                msgDiv.style.fontSize = 'clamp(18px,5vw,30px)';
+                msgDiv.style.boxShadow = '0 0 40px rgba(255,80,120,0.9)';
+                msgDiv.style.zIndex = '10001';
+                msgDiv.style.backdropFilter = 'blur(12px)';
+                msgDiv.style.border = '2px solid gold';
+                msgDiv.style.whiteSpace = 'nowrap';
+                msgDiv.style.fontFamily = 'cursive';
+                msgDiv.style.textAlign = 'center';
+                msgDiv.style.letterSpacing = '2px';
+                document.body.appendChild(msgDiv);
+                setTimeout(() => {
+                    msgDiv.style.transition = 'all 0.5s';
+                    msgDiv.style.opacity = '0';
+                    msgDiv.style.transform = 'translate(-50%, -70%) scale(0.9)';
+                    setTimeout(() => msgDiv.remove(), 600);
+                }, 1800);
+                e.preventDefault();
+            });
+        }
+
+        // Extra random romantic sparks from hearts automatically
+        setInterval(() => {
+            const heartsArray = [document.getElementById('heartYassine'), document.getElementById('heartMaryam')];
+            heartsArray.forEach(heart => {
+                if(heart && Math.random() > 0.7) {
+                    const rect = heart.getBoundingClientRect();
+                    const randX = rect.left + Math.random() * rect.width;
+                    const randY = rect.top + Math.random() * rect.height;
+                    createSparkle(randX, randY);
+                }
+            });
+        }, 1800);
+
+        // Animate ring gently on load and add sparkle around ring periodic
+        setInterval(() => {
+            const ringDivv = document.getElementById('ringUnity');
+            if(ringDivv) {
+                const rectRing = ringDivv.getBoundingClientRect();
+                if(rectRing.width > 0) {
+                    for(let s=0; s<3; s++) {
+                        setTimeout(() => {
+                            const offX = rectRing.left + rectRing.width/2 + (Math.random() - 0.5) * 60;
+                            const offY = rectRing.top + rectRing.height/2 + (Math.random() - 0.5) * 40;
+                            createSparkle(offX, offY);
+                        }, s*100);
+                    }
+                }
+            }
+        }, 2800);
+
+        // dynamic heartbeat effect toggle on hover or just keep strong beat, we already have infinite heart-beat class
+        // Add small interactive double heart message on window load
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.innerText = '💍❤️ YASSINE & MARYAM : LÉGENDE D’AMOUR ❤️💍';
+        welcomeMessage.style.position = 'fixed';
+        welcomeMessage.style.bottom = '20px';
+        welcomeMessage.style.left = '20px';
+        welcomeMessage.style.background = 'rgba(0,0,0,0.5)';
+        welcomeMessage.style.backdropFilter = 'blur(8px)';
+        welcomeMessage.style.padding = '6px 14px';
+        welcomeMessage.style.borderRadius = '40px';
+        welcomeMessage.style.color = '#ffe0e7';
+        welcomeMessage.style.fontSize = '12px';
+        welcomeMessage.style.fontWeight = 'bold';
+        welcomeMessage.style.zIndex = '20';
+        welcomeMessage.style.fontFamily = 'monospace';
+        document.body.appendChild(welcomeMessage);
+        setTimeout(() => {
+            welcomeMessage.style.transition = 'opacity 1s';
+            welcomeMessage.style.opacity = '0.7';
+        }, 1000);
+    })();
+</script>
+
+<style>
+    /* Additional animation for ring inside banner */
+    @keyframes ring-bounce {
+        0% { transform: translateY(0px); }
+        100% { transform: translateY(-6px); }
+    }
+    .heart-shape {
+        transition: filter 0.2s, transform 0.1s;
+    }
+    .ring-union {
+        transition: transform 0.1s;
+    }
+    body {
+        user-select: none;
+    }
+</style>
+</body>
+</html>

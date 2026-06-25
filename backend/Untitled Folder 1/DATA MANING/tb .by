@@ -1,0 +1,266 @@
+# ex 2
+
+
+
+
+
+# 1. Créer la liste x
+x = [5.1, 4.9, 6.2, 5.9, 6.7, 5.0, 6.4, 7.0, 5.4, 6.9]
+print("Liste x :", x)
+
+
+# 2. Fonction tri_bulles : tri à bulles sans utiliser sorted()
+def tri_bulles(xs: list[float]) -> list[float]:
+    L = xs.copy()  # on travaille sur une copie
+    n = len(L)
+    for i in range(n - 1):
+        for j in range(0, n - i - 1):
+            if L[j] > L[j + 1]:
+                L[j], L[j + 1] = L[j + 1], L[j]  # on échange
+    return L
+
+
+# 3. Fonction somme_ : calcule la somme sans sum()
+def somme_(xs: list[float]) -> float:
+    total = 0
+    for val in xs:
+        total += val
+    return total
+
+
+# 4. Fonction mean_ : moyenne des éléments
+def mean_(x: list[float]) -> float:
+    return somme_(x) / len(x)
+
+
+# 5. Fonction median_ : retourne la médiane
+def median_(x: list[float]) -> float:
+    L = tri_bulles(x)
+    n = len(L)
+    if n % 2 == 1:
+        return L[n // 2]  # impair : milieu
+    else:
+        return (L[n // 2 - 1] + L[n // 2]) / 2  # pair : moyenne des deux du milieu
+
+
+# 6. Fonction var_pop : variance population (σ²)
+def var_pop(x: list[float]) -> float:
+    m = mean_(x)
+    total = 0
+    for val in x:
+        total += (val - m) ** 2
+    return total / len(x)
+
+
+# 7. Fonction var_sample : variance échantillon (s²)
+def var_sample(x: list[float]) -> float:
+    m = mean_(x)
+    total = 0
+    for val in x:
+        total += (val - m) ** 2
+    return total / (len(x) - 1)
+
+
+# 8. Fonction std_pop : écart-type population (σ)
+def std_pop(x: list[float]) -> float:
+    return var_pop(x) ** 0.5
+
+
+# 9. Fonction std_sample : écart-type échantillon (s)
+def std_sample(x: list[float]) -> float:
+    return var_sample(x) ** 0.5
+
+
+# --- Tests des fonctions ---
+print("Liste triée :", tri_bulles(x))
+print("Somme =", somme_(x))
+print("Moyenne =", mean_(x))
+print("Médiane =", median_(x))
+print("Variance population =", var_pop(x))
+print("Variance échantillon =", var_sample(x))
+print("Écart-type population =", std_pop(x))
+print("Écart-type échantillon =", std_sample(x))
+
+
+
+
+# Ex3
+
+
+# Créer la liste x
+x = [5.1, 4.9, 6.2, 5.9, 6.7, 5.0, 6.4, 7.0, 5.4, 6.9]
+print("x =", x)
+
+# -----------------------------
+# 1. Normalisation Min-Max
+# -----------------------------
+def minmax_scale(x: list[float]) -> list[float]:
+    xmin = min(x)
+    xmax = max(x)
+    if xmax == xmin:
+        return [0.0] * len(x)
+    return [(xi - xmin) / (xmax - xmin) for xi in x]
+
+# Appliquer la fonction
+x_norm = minmax_scale(x)
+print("x normalisé (Min-Max) =", x_norm)
+print("min =", min(x_norm))
+print("max =", max(x_norm))
+
+
+# -----------------------------
+# 2. Standardisation Z-score
+# -----------------------------
+def mean_(x: list[float]) -> float:
+    return sum(x) / len(x)
+
+def std_pop(x: list[float]) -> float:
+    m = mean_(x)
+    s = 0
+    for v in x:
+        s += (v - m) ** 2
+    return (s / len(x)) ** 0.5
+
+def zscore_pop(x: list[float]) -> list[float]:
+    m = mean_(x)
+    s = std_pop(x)
+    if s == 0:
+        return [0.0] * len(x)
+    return [(xi - m) / s for xi in x]
+
+# Appliquer la fonction
+x_z = zscore_pop(x)
+print("x standardisé (Z-score) =", x_z)
+print("moyenne =", mean_(x_z))
+print("écart-type =", std_pop(x_z))
+
+
+# -----------------------------
+# 3. Normalisation robuste (IQR)
+# -----------------------------
+def median_(x: list[float]) -> float:
+    L = sorted(x)
+    n = len(L)
+    if n % 2 == 1:
+        return L[n // 2]
+    else:
+        return (L[n // 2 - 1] + L[n // 2]) / 2
+
+def robust_iqr(x: list[float]) -> list[float]:
+    L = sorted(x)
+    n = len(L)
+    Q2 = median_(L)
+    Q1 = median_(L[:n//2])
+    Q3 = median_(L[(n+1)//2:])
+    IQR = Q3 - Q1
+    if IQR == 0:
+        return [0.0] * len(L)
+    return [(xi - Q2) / IQR for xi in L]
+
+# Appliquer la fonction
+x_r = robust_iqr(x)
+print("x normalisé (IQR) =", x_r)
+print("médiane =", median_(x_r))
+
+
+
+# Ex 4
+
+
+# Créer les vecteurs
+x1 = [5.1, 3.5, 1.4, 0.2]
+x2 = [4.9, 3.0, 1.4, 0.2]
+x3 = [6.2, 2.9, 4.3, 1.3]
+x4 = [5.9, 3.0, 4.2, 1.5]
+x5 = [6.7, 3.1, 5.6, 2.4]
+a = [1,0,0,1,1,0,1,0]
+b = [0,1,0,1,0,1,1,0]
+
+# 2. Distance Euclidienne
+def dist_euclid(x: list[float], y: list[float]) -> float:
+    s = 0
+    for i in range(len(x)):
+        s += (x[i] - y[i]) ** 2
+    return s ** 0.5
+
+# 3. Distance Manhattan
+def dist_manhattan(x: list[float], y: list[float]) -> float:
+    s = 0
+    for i in range(len(x)):
+        s += abs(x[i] - y[i])
+    return s
+
+# 4. Similarité de Jaccard (binaire)
+def sim_jaccard_binary(a: list[int], b: list[int]) -> float:
+    inter = 0
+    union = 0
+    for i in range(len(a)):
+        if a[i] == 1 or b[i] == 1:
+            union += 1
+        if a[i] == 1 and b[i] == 1:
+            inter += 1
+    return inter / union if union != 0 else 0.0
+
+# 5. Matrice des distances euclidiennes (5x5)
+X = [x1, x2, x3, x4, x5]
+D = []
+for i in range(len(X)):
+    ligne = []
+    for j in range(len(X)):
+        ligne.append(round(dist_euclid(X[i], X[j]), 3))
+    D.append(ligne)
+
+print("Matrice des distances euclidiennes :")
+for ligne in D:
+    print(ligne)
+
+# 6. Comparer Manhattan et Euclidienne
+print("dist_manhattan(x1, x2) =", dist_manhattan(x1, x2))
+print("dist_euclid(x1, x2) =", dist_euclid(x1, x2))
+print("sim_jaccard_binary(a,b) =", sim_jaccard_binary(a,b))
+
+
+## ex 5
+
+x = [5.1, 4.9, 6.2, 5.9, 6.7, 5.0, 6.4, 7.0, 5.4, 6.9]
+y = [1.4, 1.4, 4.3, 4.2, 5.6, 1.3, 4.5, 5.4, 1.7, 5.1]
+
+# 2. Corrélation de Pearson
+def pearson_corr(x: list[float], y: list[float]) -> float:
+    mx = mean_(x)
+    my = mean_(y)
+    num = 0
+    denx = 0
+    deny = 0
+    for i in range(len(x)):
+        num += (x[i] - mx) * (y[i] - my)
+        denx += (x[i] - mx) ** 2
+        deny += (y[i] - my) ** 2
+    return num / ((denx * deny) ** 0.5)
+
+r = pearson_corr(x, y)
+print("r =", round(r, 4))
+# Si r proche de 1 : forte corrélation positive
+# Si r proche de -1 : forte corrélation négative
+# Si r proche de 0 : pas de corrélation
+
+
+# 3. Régression linéaire : y = a*x + b
+def regression_lin(x: list[float], y: list[float]) -> tuple[float, float]:
+    mx = mean_(x)
+    my = mean_(y)
+    num = sum((x[i] - mx) * (y[i] - my) for i in range(len(x)))
+    den = sum((x[i] - mx) ** 2 for i in range(len(x)))
+    a = num / den
+    b = my - a * mx
+    return a, b
+
+a, b = regression_lin(x, y)
+print("a =", round(a, 4))
+print("b =", round(b, 4))
+
+# prédire y pour x0 = 6.0
+x0 = 6.0
+y0 = a * x0 + b
+print("Pour x0 =", x0, "=> y0 =", round(y0, 4))
+      

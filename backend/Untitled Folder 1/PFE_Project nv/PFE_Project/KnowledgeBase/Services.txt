@@ -1,0 +1,37 @@
+Service 1: AI Customer Support Assistant
+Description:
+This service provides an AI-powered assistant that can answer customer questions using company documents such as FAQs, policies, and service descriptions.
+
+Key Features:
+- Natural language understanding
+- Fast and accurate responses
+- 24/7 availability
+- Easy integration with web applications
+
+Service 2: Data Analysis and Dashboarding
+Description:
+We provide data analysis services that help companies understand their business data using dashboards and visual reports.
+
+Key Features:
+- Data visualization
+- Sales and performance analysis
+- Trend analysis
+- Decision support
+
+Service 3: Report Generation
+Description:
+This service automatically generates business reports based on company data.
+
+Key Features:
+- Automatic summaries
+- Exportable reports
+- Clear and structured information
+
+Service 4: Cloud-Based Solutions
+Description:
+We design and deploy cloud-based applications using modern technologies.
+
+Key Features:
+- Scalable systems
+- Secure infrastructure
+- Easy maintenance

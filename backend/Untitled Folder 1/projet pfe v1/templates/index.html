@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Sales Agent</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h2 { color: #2c3e50; }
+        #chat { border: 1px solid #ccc; padding: 15px; height: 500px; overflow-y: scroll; background: #f9f9f9; }
+        .message { margin: 10px 0; }
+        .user { color: #2980b9; font-weight: bold; }
+        .agent { color: #27ae60; font-weight: bold; }
+        img.chart { display: block; margin-top: 10px; max-width: 90%; }
+        input[type=text] { width: 70%; padding: 10px; margin-right: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+
+<h2>AI Sales Agent</h2>
+
+<div id="chat">
+    <p><em>Start asking questions about sales data or the knowledge base...</em></p>
+</div>
+
+<input type="text" id="question" placeholder="Ask something..." onkeydown="if(event.key==='Enter'){askQuestion();}">
+<button onclick="askQuestion()">Send</button>
+
+<script>
+let session_id = null;
+
+function appendMessage(role, text, chart=null) {
+    const chat = document.getElementById("chat");
+    const div = document.createElement("div");
+    div.className = "message";
+    div.innerHTML = `<span class="${role}">${role === 'user' ? 'You' : 'Agent'}:</span> ${text}`;
+    if(chart){
+        const img = document.createElement("img");
+        img.src = chart;
+        img.className = "chart";
+        div.appendChild(img);
+    }
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function askQuestion() {
+    const question = document.getElementById("question").value;
+    if(!question) return;
+
+    appendMessage("user", question);
+    document.getElementById("question").value = "";
+
+    fetch("/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: question, session_id: session_id })
+    })
+    .then(response => response.json())
+    .then(data => {
+        session_id = data.session_id;
+        appendMessage("agent", data.answer, data.chart);
+
+        // Show last 3 previous Q&A from memory
+        if(data.session_id && data.category === 'analytics'){
+            fetchPreviousQA(data.session_id);
+        }
+    })
+    .catch(err => {
+        appendMessage("agent", "Error connecting to server: " + err);
+    });
+}
+
+function fetchPreviousQA(session_id){
+    // For simplicity, backend returns memory in future version
+    // Here we can just simulate previous interactions visually if needed
+    // Or you can extend Flask to return last N interactions in /ask response
+}
+</script>
+
+</body>
+</html>

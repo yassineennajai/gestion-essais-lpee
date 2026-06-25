@@ -1,0 +1,21 @@
+Customer Support Policy:
+
+Support Channels:
+- Email support
+- Phone support
+
+Response Time:
+- Emails received during working hours are answered within 2 hours.
+- Emails received outside working hours are answered on the next business day.
+
+Technical Issues:
+Technical issues are analyzed by the technical team and resolved as quickly as possible depending on complexity.
+
+Service Availability:
+Our AI services are available 24/7. However, human support is only available during working hours.
+
+Customer Responsibilities:
+Customers are expected to provide clear and accurate information when requesting support.
+
+Data Privacy:
+Customer data is handled securely and is not shared with third parties.

@@ -1,0 +1,9 @@
+nom;type;définition;unité_ou_domaine;contraintes;traitement
+date;datetime;Date de la transaction;YYYY-MM-DD;non null;Convertir en datetime et dériver is_dimanche
+produit;string;Nom du produit vendu;texte;non null;Harmonisation des noms
+prix_unitaire;float;Prix unitaire du produit;MAD;? 0;Imputation des valeurs manquantes par médiane
+quantite;int;Quantité vendue;entier;> 0;Imputation des valeurs manquantes par 1
+remise_pct;float;Pourcentage de remise;%;0–100;Imputation des valeurs manquantes par 0
+montant;float;Montant total (prix_unitaire × quantite × (1 - remise_pct/100));MAD;? 0;Variable dérivée
+ville;string;Ville où la vente a eu lieu;texte;non null;Pas de traitement nécessaire
+moyen_paiement;string;Moyen de paiement;Carte, Cash, En ligne…;non null;Harmonisation des valeurs (ex: CB ? Carte, En-ligne ? En ligne)

@@ -1,0 +1,118 @@
+Prefix: : <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7/>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+
+Ontology: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7>
+
+
+ObjectProperty: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#appartientADepartement>
+
+    Domain: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#departement>
+    
+    Range: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+    
+    
+ObjectProperty: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#concerneCours>
+
+    Domain: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Examen>
+    
+    Range: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+    
+    
+ObjectProperty: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#enseignecours>
+
+    Domain: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+    
+    Range: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Enseignant>
+    
+    
+ObjectProperty: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#passeExamen>
+
+    Domain: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#etudiant>
+    
+    Range: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Examen>
+    
+    
+ObjectProperty: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#suit_cours>
+
+    Domain: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+    
+    Range: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#etudiant>
+    
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Enseignant>
+
+    SubClassOf: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#personne>
+    
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Examen>
+
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#departement>
+
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#etudiant>
+
+    SubClassOf: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#personne>
+    
+    
+Class: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#personne>
+
+    
+Individual: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Examen_Math101>
+
+    
+Individual: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Math101>
+
+    Types: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#cours>
+    
+    Facts:  
+     <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#appartientADepartement>  <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Mathematiques>
+    
+    
+Individual: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Mathematiques>
+
+    Types: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#departement>
+    
+    
+Individual: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#ahmed>
+
+    Types: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Enseignant>
+    
+    Facts:  
+     <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#enseignecours>  <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Math101>
+    
+    
+Individual: <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#fatima>
+
+    Types: 
+        <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#etudiant>
+    
+    Facts:  
+     <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#passeExamen>  <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Examen_Math101>,
+     <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#suit_cours>  <http://www.semanticweb.org/dell/ontologies/2025/10/untitled-ontology-7#Math101>
+    
+    

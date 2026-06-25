@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexusAI — Sales Intelligence Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg0:   #080b14;
+  --bg1:   #0f1117;
+  --bg2:   #151822;
+  --bg3:   #1c2030;
+  --bg4:   #252a3d;
+  --border:#2a2f45;
+  --blue:  #4f8ef7;
+  --blue2: #3a7bd5;
+  --cyan:  #43c5c5;
+  --green: #43c59e;
+  --red:   #f76c5e;
+  --amber: #f9a825;
+  --purple:#ab47bc;
+  --text0: #e8eaf0;
+  --text1: #b0b8cc;
+  --text2: #6b7591;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --radius: 12px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg0);
+  color: var(--text0);
+  font-family: var(--font-body);
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────── */
+#app {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  grid-template-rows: 60px 1fr;
+  height: 100vh;
+  gap: 0;
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+.logo-dot { 
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  vertical-align: middle;
+  margin-left: 6px;
+  -webkit-text-fill-color: initial;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform: scale(1); }
+  50%      { opacity:.5; transform: scale(0.8); }
+}
+
+.header-spacer { flex: 1; }
+
+.header-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.hstat {
+  text-align: right;
+}
+
+.hstat-val {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.hstat-label {
+  font-size: 10px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── SIDEBAR LEFT ─────────────────────────────────────── */
+#sidebar-left {
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+
+/* Suggestions */
+.suggestion-btn {
+  width: 100%;
+  text-align: left;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: var(--text1);
+  font-size: 12px;
+  line-height: 1.4;
+  transition: all 0.2s ease;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.suggestion-btn:hover {
+  background: var(--bg4);
+  border-color: var(--blue);
+  color: var(--text0);
+  transform: translateX(2px);
+}
+
+.suggestion-btn .s-icon {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+/* Schema panel */
+#schema-panel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.schema-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+
+.schema-col:hover { background: var(--bg3); }
+
+.schema-col-type {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.type-num  { background: rgba(79,142,247,0.15); color: var(--blue); }
+.type-cat  { background: rgba(67,197,158,0.15); color: var(--green); }
+.type-date { background: rgba(249,168,37,0.15);  color: var(--amber); }
+
+.schema-col-name { color: var(--text1); }
+
+/* ── MAIN CHAT ────────────────────────────────────────── */
+#main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg0);
+}
+
+#chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
+}
+
+#chat-area::-webkit-scrollbar { width: 4px; }
+#chat-area::-webkit-scrollbar-track { background: transparent; }
+#chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* Welcome */
+#welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  padding: 40px;
+  gap: 16px;
+  animation: fadeIn 0.6s ease;
+}
+
+.welcome-icon {
+  width: 64px; height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 0 40px rgba(79,142,247,0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text0), var(--text1));
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-sub {
+  color: var(--text2);
+  font-size: 14px;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+/* Messages */
+.message {
+  display: flex;
+  gap: 12px;
+  animation: slideIn 0.3s ease;
+  max-width: 100%;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.message.user { flex-direction: row-reverse; }
+
+.avatar {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.avatar.user-av {
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  color: #fff;
+  font-family: var(--font-display);
+}
+
+.avatar.agent-av {
+  background: linear-gradient(135deg, #1c2030, #252a3d);
+  border: 1px solid var(--border);
+  font-size: 16px;
+}
+
+.bubble {
+  max-width: 75%;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  line-height: 1.6;
+  font-size: 13.5px;
+}
+
+.message.user .bubble {
+  background: linear-gradient(135deg, var(--blue2), var(--blue));
+  color: #fff;
+  border-bottom-right-radius: 3px;
+}
+
+.message.agent .bubble {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text0);
+  border-bottom-left-radius: 3px;
+  white-space: pre-wrap;
+}
+
+.bubble-type-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+.badge-analytics { background: rgba(79,142,247,0.15); color: var(--blue); }
+.badge-rag       { background: rgba(67,197,158,0.15); color: var(--green); }
+.badge-freeform  { background: rgba(249,168,37,0.15);  color: var(--amber); }
+
+.intent-text {
+  font-size: 11px;
+  color: var(--text2);
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.chart-container {
+  margin-top: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  max-width: 100%;
+}
+
+.chart-container img {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  transition: transform 0.2s;
+  cursor: zoom-in;
+}
+
+.chart-container img:hover { transform: scale(1.02); }
+
+/* Typing indicator */
+#typing {
+  display: none;
+  gap: 12px;
+  align-items: flex-start;
+  animation: slideIn 0.3s ease;
+}
+
+.typing-bubble {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-bottom-left-radius: 3px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.typing-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; background: var(--cyan); }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; background: var(--green); }
+
+@keyframes bounce {
+  0%,80%,100% { transform: translateY(0); opacity:.5; }
+  40%          { transform: translateY(-8px); opacity:1; }
+}
+
+/* ── INPUT BAR ────────────────────────────────────────── */
+#input-bar {
+  padding: 16px 28px 20px;
+  background: var(--bg0);
+  border-top: 1px solid var(--border);
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 12px 12px 18px;
+  transition: border-color 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+}
+
+#question {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text0);
+  font-family: var(--font-body);
+  font-size: 14px;
+  resize: none;
+  min-height: 22px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+
+#question::placeholder { color: var(--text2); }
+
+#send-btn {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  color: #fff;
+  font-size: 16px;
+}
+
+#send-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px rgba(79,142,247,0.4);
+}
+
+#send-btn:active { transform: scale(0.96); }
+#send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.input-hint {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 8px;
+  padding-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+kbd {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text1);
+}
+
+/* ── SIDEBAR RIGHT ────────────────────────────────────── */
+#sidebar-right {
+  background: var(--bg1);
+  border-left: 1px solid var(--border);
+  padding: 20px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Stats cards */
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.stat-card:hover { border-color: var(--blue); }
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+
+/* History */
+.hist-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hist-item:hover {
+  border-color: var(--blue);
+  background: var(--bg3);
+}
+
+.hist-q {
+  font-size: 12px;
+  color: var(--text1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+.hist-a {
+  font-size: 11px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Clear btn */
+#clear-btn {
+  width: 100%;
+  padding: 9px;
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+#clear-btn:hover {
+  background: rgba(247,108,94,0.1);
+}
+
+/* Modal zoom */
+#img-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  backdrop-filter: blur(4px);
+}
+
+#img-modal.active { display: flex; }
+
+#img-modal img {
+  max-width: 90vw;
+  max-height: 88vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+  animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Scrollbar global */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <span class="logo">NexusAI <span class="logo-dot"></span></span>
+    <span class="header-badge">Sales Intelligence Agent · Amazon Bedrock</span>
+    <div class="header-spacer"></div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-val" id="h-rows">—</div>
+        <div class="hstat-label">Records</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val" id="h-cols">—</div>
+        <div class="hstat-label">Columns</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val" id="h-msgs">0</div>
+        <div class="hstat-label">Messages</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR LEFT -->
+  <aside id="sidebar-left">
+    <div>
+      <div class="section-title">Quick Questions</div>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">📊</span>Show top 10 products by sales
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">📈</span>Plot sales trend over time
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">🌍</span>Compare revenue by region
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">💰</span>What is the total revenue?
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">🥧</span>Pie chart of sales by category
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">📉</span>Show sales distribution histogram
+      </button>
+      <button class="suggestion-btn" onclick="ask_suggestion(this)">
+        <span class="s-icon">❓</span>What are your return policies?
+      </button>
+    </div>
+
+    <div>
+      <div class="section-title">Dataset Schema</div>
+      <div id="schema-panel">Loading...</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CHAT -->
+  <main id="main">
+    <div id="chat-area">
+      <div id="welcome">
+        <div class="welcome-icon">🤖</div>
+        <div class="welcome-title">Hello, I'm NexusAI</div>
+        <div class="welcome-sub">
+          Ask me anything about your sales data — trends, rankings, totals, charts — 
+          or questions about your company knowledge base.
+        </div>
+      </div>
+
+      <div id="typing">
+        <div class="avatar agent-av">🧠</div>
+        <div class="typing-bubble">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="input-bar">
+      <div class="input-wrapper">
+        <textarea id="question" rows="1"
+          placeholder="Ask about sales data, trends, top products, or company policies…"></textarea>
+        <button id="send-btn" onclick="sendQuestion()" title="Send (Enter)">➤</button>
+      </div>
+      <div class="input-hint">
+        <span>Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- SIDEBAR RIGHT -->
+  <aside id="sidebar-right">
+    <div>
+      <div class="section-title">Session Stats</div>
+      <div class="stat-card">
+        <div class="stat-label">Questions Asked</div>
+        <div class="stat-value" id="stat-q">0</div>
+      </div>
+      <div class="stat-card" style="margin-top:8px">
+        <div class="stat-label">Charts Generated</div>
+        <div class="stat-value" id="stat-c">0</div>
+      </div>
+      <div class="stat-card" style="margin-top:8px">
+        <div class="stat-label">Session Type Split</div>
+        <div class="stat-value" id="stat-type" style="font-size:13px; line-height:1.8; color:var(--text1)">—</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">History</div>
+      <div id="history-panel"><div style="color:var(--text2);font-size:12px">No history yet.</div></div>
+    </div>
+
+    <button id="clear-btn" onclick="clearSession()">🗑 Clear Conversation</button>
+  </aside>
+
+</div>
+
+<!-- IMAGE ZOOM MODAL -->
+<div id="img-modal" onclick="closeModal()">
+  <img id="modal-img" src="" alt="Chart"/>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────
+let session_id = null;
+let msgCount   = 0;
+let chartCount = 0;
+let typeCounts = { analytics: 0, rag: 0, freeform_analytics: 0 };
+
+// ── INIT ───────────────────────────────────────────────────
+window.addEventListener("load", () => {
+  loadSchema();
+  const ta = document.getElementById("question");
+  ta.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendQuestion();
+    }
+  });
+  ta.addEventListener("input", () => {
+    ta.style.height = "auto";
+    ta.style.height = Math.min(ta.scrollHeight, 120) + "px";
+  });
+});
+
+// ── SCHEMA ─────────────────────────────────────────────────
+async function loadSchema() {
+  try {
+    const r = await fetch("/schema");
+    const d = await r.json();
+    document.getElementById("h-rows").textContent = d.rows.toLocaleString();
+    document.getElementById("h-cols").textContent = d.columns.length;
+
+    const panel = document.getElementById("schema-panel");
+    panel.innerHTML = d.columns.map(c => {
+      let type = "cat", cls = "type-cat", label = "STR";
+      if (d.numeric.includes(c))     { type="num";  cls="type-num";  label="NUM"; }
+      if (c.includes("date"))        { type="date"; cls="type-date"; label="DATE";}
+      return `<div class="schema-col">
+        <span class="schema-col-type ${cls}">${label}</span>
+        <span class="schema-col-name">${c}</span>
+      </div>`;
+    }).join("");
+  } catch(e) {
+    document.getElementById("schema-panel").innerHTML =
+      `<span style="color:var(--text2);font-size:11px">Schema unavailable</span>`;
+  }
+}
+
+// ── SEND QUESTION ──────────────────────────────────────────
+async function sendQuestion() {
+  const input = document.getElementById("question");
+  const q = input.value.trim();
+  if (!q) return;
+
+  input.value = "";
+  input.style.height = "auto";
+  document.getElementById("send-btn").disabled = true;
+
+  // Hide welcome
+  const welcome = document.getElementById("welcome");
+  if (welcome) welcome.remove();
+
+  appendMessage("user", q);
+  showTyping(true);
+  scrollBottom();
+
+  try {
+    const res = await fetch("/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q, session_id })
+    });
+    const data = await res.json();
+
+    showTyping(false);
+    session_id = data.session_id;
+
+    appendAgentMessage(data);
+    updateStats(data);
+    updateHistory(data.last_qa);
+
+  } catch (err) {
+    showTyping(false);
+    appendMessage("agent", "⚠️ Connection error: " + err.message);
+  }
+
+  document.getElementById("send-btn").disabled = false;
+  input.focus();
+  scrollBottom();
+}
+
+// ── SUGGESTIONS ────────────────────────────────────────────
+function ask_suggestion(btn) {
+  const text = btn.textContent.trim().replace(/^[^\w]+/, "");
+  document.getElementById("question").value = text;
+  sendQuestion();
+}
+
+// ── APPEND USER MESSAGE ────────────────────────────────────
+function appendMessage(role, text) {
+  const area = document.getElementById("chat-area");
+  const div  = document.createElement("div");
+  div.className = `message ${role}`;
+
+  const av = document.createElement("div");
+  av.className = role === "user" ? "avatar user-av" : "avatar agent-av";
+  av.textContent = role === "user" ? "U" : "🧠";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+
+  div.appendChild(av);
+  div.appendChild(bubble);
+
+  const typing = document.getElementById("typing");
+  area.insertBefore(div, typing);
+}
+
+// ── APPEND AGENT MESSAGE ───────────────────────────────────
+function appendAgentMessage(data) {
+  const area   = document.getElementById("chat-area");
+  const typing = document.getElementById("typing");
+
+  const div = document.createElement("div");
+  div.className = "message agent";
+
+  const av = document.createElement("div");
+  av.className = "avatar agent-av";
+  av.textContent = "🧠";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  // Type badge
+  const cat = data.category || "rag";
+  const badgeClass = { analytics:"badge-analytics", rag:"badge-rag", freeform_analytics:"badge-freeform" }[cat] || "badge-rag";
+  const badgeLabel = { analytics:"📊 Analytics", rag:"📚 Knowledge Base", freeform_analytics:"⚡ Deep Analytics" }[cat] || "📚 RAG";
+
+  let html = `<span class="bubble-type-badge ${badgeClass}">${badgeLabel}</span>`;
+  if (data.manus_task) html += `<div class="intent-text">🤖 Manus Task: <code style="color:var(--cyan);font-family:var(--font-mono);font-size:10px">${escHtml(data.manus_task)}</code></div>`;
+  if (data.intent) html += `<div class="intent-text">${escHtml(data.intent)}</div>`;
+  html += `<div>${escHtml(data.answer || "No answer.")}</div>`;
+  bubble.innerHTML = html;
+
+  // Chart
+  if (data.chart) {
+    chartCount++;
+    document.getElementById("stat-c").textContent = chartCount;
+    const container = document.createElement("div");
+    container.className = "chart-container";
+    const img = document.createElement("img");
+    img.src = data.chart + "?t=" + Date.now();
+    img.alt = "Chart";
+    img.onclick = () => openModal(img.src);
+    container.appendChild(img);
+    bubble.appendChild(container);
+  }
+
+  div.appendChild(av);
+  div.appendChild(bubble);
+  area.insertBefore(div, typing);
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function updateStats(data) {
+  msgCount++;
+  document.getElementById("stat-q").textContent = msgCount;
+  document.getElementById("h-msgs").textContent = msgCount;
+
+  const cat = data.category || "rag";
+  if (typeCounts[cat] !== undefined) typeCounts[cat]++;
+
+  const total = msgCount || 1;
+  document.getElementById("stat-type").innerHTML =
+    `<span style="color:var(--blue)">Analytics ${Math.round(typeCounts.analytics/total*100)}%</span><br>
+     <span style="color:var(--green)">Knowledge ${Math.round(typeCounts.rag/total*100)}%</span><br>
+     <span style="color:var(--amber)">Deep ${Math.round(typeCounts.freeform_analytics/total*100)}%</span>`;
+}
+
+// ── HISTORY ────────────────────────────────────────────────
+function updateHistory(lastQA) {
+  if (!lastQA || !lastQA.length) return;
+  const panel = document.getElementById("history-panel");
+  panel.innerHTML = [...lastQA].reverse().map(qa => `
+    <div class="hist-item" onclick="reaskQuestion(this)" data-q="${escAttr(qa.question)}">
+      <div class="hist-q">💬 ${escHtml(qa.question)}</div>
+      <div class="hist-a">${escHtml((qa.answer||"").substring(0,60))}…</div>
+    </div>
+  `).join("");
+}
+
+function reaskQuestion(el) {
+  const q = el.getAttribute("data-q");
+  document.getElementById("question").value = q;
+  sendQuestion();
+}
+
+// ── CLEAR ─────────────────────────────────────────────────
+async function clearSession() {
+  if (!confirm("Clear this conversation?")) return;
+  if (session_id) {
+    await fetch("/clear", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id })
+    });
+  }
+  session_id = null;
+  msgCount = chartCount = 0;
+  typeCounts = { analytics:0, rag:0, freeform_analytics:0 };
+  document.getElementById("stat-q").textContent = "0";
+  document.getElementById("stat-c").textContent = "0";
+  document.getElementById("stat-type").textContent = "—";
+  document.getElementById("h-msgs").textContent = "0";
+  document.getElementById("history-panel").innerHTML =
+    `<div style="color:var(--text2);font-size:12px">No history yet.</div>`;
+
+  const area = document.getElementById("chat-area");
+  area.innerHTML = `
+    <div id="welcome">
+      <div class="welcome-icon">🤖</div>
+      <div class="welcome-title">Conversation Cleared</div>
+      <div class="welcome-sub">Start a new conversation below.</div>
+    </div>
+    <div id="typing">
+      <div class="avatar agent-av">🧠</div>
+      <div class="typing-bubble">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>`;
+}
+
+// ── TYPING ────────────────────────────────────────────────
+function showTyping(show) {
+  document.getElementById("typing").style.display = show ? "flex" : "none";
+}
+
+// ── SCROLL ────────────────────────────────────────────────
+function scrollBottom() {
+  const area = document.getElementById("chat-area");
+  setTimeout(() => area.scrollTop = area.scrollHeight, 60);
+}
+
+// ── IMAGE MODAL ────────────────────────────────────────────
+function openModal(src) {
+  document.getElementById("modal-img").src = src;
+  document.getElementById("img-modal").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("img-modal").classList.remove("active");
+}
+
+// ── UTILS ──────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
+                        .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function escAttr(str) {
+  return String(str||"").replace(/"/g,"&quot;");
+}
+</script>
+</body>
+</html>
